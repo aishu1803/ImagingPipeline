@@ -96,8 +96,9 @@ for i = 1:handles.N_neurons
     end
 end
 handles.pwdist = tril(handles.pwdist);
-
-[handles.r,handles.co] = find(handles.pwdist>0 & handles.pwdist < str2num(get(handles.dist,'String')) & handles.crosscoef>str2num(get(handles.corr,'String')));
+ get(handles.dist,'String') 
+ get(handles.corr,'String')
+[handles.r,handles.co] = find(handles.pwdist>0 & handles.pwdist < str2num(get(handles.dist,'String')) & handles.crosscoef>get(handles.corr,'String'));
 plot(handles.ax1,C(handles.r(1),:),'-r');
 hold(handles.ax1,'on')
 plot(handles.ax1,C(handles.co(1),:),'-b');
