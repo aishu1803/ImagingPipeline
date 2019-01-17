@@ -116,25 +116,25 @@ img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
 with_label = false;
-Coor = get_contours(handles,thr,ind);
+Coor = get_contours(handles,thr,ind,0);
 handles.Coor = Coor;
 plot_contours(handles.rawdata1.results.A(:, ind), img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
+x_pixel = size(handles.rawdata1.results.Cn,1);
+y_pixel = size(handles.rawdata1.results.Cn,2);
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
 minpeakdist = 3; %hardcoded at least three frames between spikes
-for i = 1:size(handles.rawdata1.results.C,1)
+for i = 1:size(handles.rawdata1.results.C_raw,1)
    [pk,loc] = findpeaks(handles.rawdata1.results.C(i,:),'MinPeakDistance',minpeakdist);
    P{i} = loc;
    Pks{i}= pk;
 end
-for i=1:size(handles.rawdata1.results.C,1)
+for i=1:size(handles.rawdata1.results.C_raw,1)
 
-   [b, sn] = estimate_baseline_noise(handles.rawdata1.results.C(i,:));
+   [b, sn] = estimate_baseline_noise(handles.rawdata1.results.C_raw(i,:));
    handles.SNR(i) = median(Pks{i})/sn;
    clear sn;
 end
@@ -144,6 +144,7 @@ handles.delcells=[];
 set(handles.slidertoaddtodellist,'Min',1,'Max',size(handles.updatedresults,1),'SliderStep',[1/(size(handles.updatedresults,1)-1),1],'Value',1)
 str2 = sprintf('%d pairs of neurons satisfy the thresholds',length(handles.r));
 set(handles.n_pair,'String',str2);
+handles.updatedA = handles.rawdata1.results.A;
 guidata(hObject,handles)
 
 
@@ -171,13 +172,13 @@ img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
 with_label = false;
-Coor = get_contours(handles,thr,ind);
+Coor = get_contours(handles,thr,ind,0);
 handles.Coor = Coor;
 plot_contours(handles.rawdata1.results.A(:, ind), img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
+x_pixel = size(handles.rawdata1.results.Cn,1);
+y_pixel = size(handles.rawdata1.results.Cn,2);
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells')
@@ -212,13 +213,13 @@ img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
 with_label = false;
-Coor = get_contours(handles,thr,ind);
+Coor = get_contours(handles,thr,ind,0);
 handles.Coor = Coor;
 plot_contours(handles.rawdata1.results.A(:, ind), img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
+x_pixel = size(handles.rawdata1.results.Cn,1);
+y_pixel =size(handles.rawdata1.results.Cn,2);
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells')
@@ -289,11 +290,14 @@ for i = 1:length(k1)
     tmp3 = str2num(cell2mat(k1(i)));
     tmp4 = [handles.rawdata1.results.C_raw(tmp3(1),:);handles.rawdata1.results.C_raw(tmp3(2),:)];
     merged_signal(i,:) = mean(tmp4);
+    merged_contour(:,i) = handles.rawdata1.results.A(:,tmp3(1));
     tmp1 = [tmp1 tmp3(1)];
     tmp2 = [tmp2 tmp3(2)];
 end
 handles.updatedresults(tmp1,:) = merged_signal;
 handles.updatedresults(tmp2,:)=[];
+handles.updatedA(:,tmp1) = merged_contour;
+handles.updatedA(:,tmp2)=[];
 set(handles.mergelist,'String',[]);
 set(handles.merge_alert,'String','Done merging! Restart the gui if you need to redo merging')
 guidata(hObject,handles);
@@ -308,8 +312,11 @@ function save_Callback(hObject, eventdata, handles)
 folder_name = uigetdir;
 file_str = sprintf('%s\\updated_Craw.mat',folder_name);
 C_raw = handles.updatedresults;
+contours = handles.updatedA;
 
-save(file_str,'C_raw');
+save(file_str,'C_raw','contours');
+save_str = sprintf('Saved at %s',file_str);
+set(handles.save_text,'String',save_str);
 guidata(hObject,handles);
 
 
@@ -419,6 +426,7 @@ function del_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 k1 = get(handles.deletelist,'String');
 handles.updatedresults(k1,:)=[];
+handles.updatedA(:,k1)=[];
 str = sprintf('Updated number of neurons - %d',size(handles.updatedresults,1))
 set(handles.N_final,'String',str);
 guidata(hObject,handles);
@@ -441,6 +449,23 @@ tmp = handles.updatedresults;
  plot(handles.ax1,tmp(k,:),'-r');
  str = sprintf(' SNR- %0.2d',handles.SNR(k));
 title(handles.ax1,str);
+imagesc(handles.rawdata1.results.Cn',[0 1]);
+hold(handles.ax2,'on')
+set(handles.ax2,'YDir','normal')
+img = handles.rawdata1.results.Cn;
+ind = k;
+thr =  str2num(get(handles.thr,'String'));
+with_label = false;
+Coor = get_contours(handles,thr,ind,1);
+handles.Coor = Coor;
+plot_contours(handles.updatedA(:, ind), img, thr,with_label, [], handles.Coor, 2);
+colormap gray;
+hold(handles.ax2,'off')
+x_pixel =size(handles.rawdata1.results.Cn,1);
+y_pixel = size(handles.rawdata1.results.Cn,2);
+xlim(handles.ax2,[0 x_pixel])
+ylim(handles.ax2,[0 y_pixel])
+title(handles.ax2,'Spatial locations of the cells');
 
  
 
@@ -619,10 +644,15 @@ if b<bmin
    sn = fit_gauss1(bins-bmin, nums, 0.3, 3,false );
 end
 
- function Coor = get_contours(h2, thr, ind)
+ function Coor = get_contours(h2, thr, ind,updated)
+     if updated
+         A_ = h2.updatedA;
+         A_ = A_(:,ind);
+     else
            A_ = h2.rawdata1.results.A;
         
                A_ = A_(:, ind);
+     end
           
           
            num_neuron = size(A_,2);
@@ -632,8 +662,8 @@ end
            else
                Coor = cell(num_neuron,1);
            end
-           d1 = h2.rawdata1.results.options.d1;
-           d2 = h2.rawdata1.results.options.d2;
+           d1 = size(h2.rawdata1.results.Cn,1);
+           d2 = size(h2.rawdata1.results.Cn,2);
            %             tmp_kernel = strel('square', 3);
            for m=1:num_neuron
                % smooth the image with median filter
@@ -790,6 +820,23 @@ tmp = handles.updatedresults;
 plot(handles.ax1,tmp(k,:),'-r');
 str = sprintf(' SNR- %0.2d Cell no - %d',handles.SNR(k),k);
 title(handles.ax1,str);
+imagesc(handles.rawdata1.results.Cn',[0 1]);
+hold(handles.ax2,'on')
+set(handles.ax2,'YDir','normal')
+img = handles.rawdata1.results.Cn;
+ind = k;
+thr =  str2num(get(handles.thr,'String'));
+with_label = false;
+Coor = get_contours(handles,thr,ind,1);
+handles.Coor = Coor;
+plot_contours(handles.updatedA(:, ind), img, thr,with_label, [], handles.Coor, 2);
+colormap gray;
+hold(handles.ax2,'off')
+x_pixel =size(handles.rawdata1.results.Cn,1);
+y_pixel = size(handles.rawdata1.results.Cn,2);
+xlim(handles.ax2,[0 x_pixel])
+ylim(handles.ax2,[0 y_pixel])
+title(handles.ax2,'Spatial locations of the cells');
 
 
 
@@ -827,6 +874,23 @@ hold(handles.ax1,'off')
 str = sprintf('Cell 1 - %d \n Cell 2 - %d \n ',tmp(1),tmp(2));
 title(handles.ax1,str);
 legend(handles.ax1,'Cell 1','Cell 2');
+imagesc(handles.rawdata1.results.Cn',[0 1]);
+hold(handles.ax2,'on')
+set(handles.ax2,'YDir','normal')
+img = handles.rawdata1.results.Cn;
+ind = tmp;
+thr =  str2num(get(handles.thr,'String'));
+with_label = false;
+Coor = get_contours(handles,thr,ind,1);
+handles.Coor = Coor;
+plot_contours(handles.updatedA(:, ind), img, thr,with_label, [], handles.Coor, 2);
+colormap gray;
+hold(handles.ax2,'off')
+x_pixel =size(handles.rawdata1.results.Cn,1);
+y_pixel =size(handles.rawdata1.results.Cn,2);
+xlim(handles.ax2,[0 x_pixel])
+ylim(handles.ax2,[0 y_pixel])
+title(handles.ax2,'Spatial locations of the cells');
 guidata(hObject,handles);
 
 
