@@ -118,11 +118,14 @@ thr =  str2num(get(handles.thr,'String'));
 with_label = false;
 Coor = get_contours(handles,thr,ind,0);
 handles.Coor = Coor;
-plot_contours(handles.rawdata1.results.A(:, ind), img, thr,with_label, [], handles.Coor, 2);
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+
+plot_contours(handles.rawdata1.results.A(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = size(handles.rawdata1.results.Cn,1);
-y_pixel = size(handles.rawdata1.results.Cn,2);
+x_pixel = handles.rawdata1.results.options.d1;
+y_pixel = handles.rawdata1.results.options.d2;
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
@@ -174,11 +177,13 @@ thr =  str2num(get(handles.thr,'String'));
 with_label = false;
 Coor = get_contours(handles,thr,ind,0);
 handles.Coor = Coor;
-plot_contours(handles.rawdata1.results.A(:, ind), img, thr,with_label, [], handles.Coor, 2);
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.rawdata1.results.A(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = size(handles.rawdata1.results.Cn,1);
-y_pixel = size(handles.rawdata1.results.Cn,2);
+x_pixel = handles.rawdata1.results.options.d1;
+y_pixel = handles.rawdata1.results.options.d2;
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells')
@@ -215,11 +220,13 @@ thr =  str2num(get(handles.thr,'String'));
 with_label = false;
 Coor = get_contours(handles,thr,ind,0);
 handles.Coor = Coor;
-plot_contours(handles.rawdata1.results.A(:, ind), img, thr,with_label, [], handles.Coor, 2);
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.rawdata1.results.A(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = size(handles.rawdata1.results.Cn,1);
-y_pixel =size(handles.rawdata1.results.Cn,2);
+x_pixel = handles.rawdata1.results.options.d1;
+y_pixel = handles.rawdata1.results.options.d2;
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells')
@@ -458,11 +465,13 @@ thr =  str2num(get(handles.thr,'String'));
 with_label = false;
 Coor = get_contours(handles,thr,ind,1);
 handles.Coor = Coor;
-plot_contours(handles.updatedA(:, ind), img, thr,with_label, [], handles.Coor, 2);
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel =size(handles.rawdata1.results.Cn,1);
-y_pixel = size(handles.rawdata1.results.Cn,2);
+x_pixel = handles.rawdata1.results.options.d1;
+y_pixel = handles.rawdata1.results.options.d2;
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
@@ -501,13 +510,12 @@ guidata(hObject,handles);
 
 
 
-function [CC,jsf] = plot_contours(Aor,Cn,thr,display_numbers,max_number,Coor, ln_wd, ln_col)
+function [CC,jsf] = plot_contours(Aor,d1,d2,Cn,thr,display_numbers,max_number,Coor, ln_wd, ln_col)
 
 % save and plot the contour traces of the found spatial components againsts
 % specified background image. The contour is drawn around the value above
 % which a specified fraction of energy is explained (default 99%)
-d1 = size(Cn,1);
-d2 = size(Cn,2);
+
 if nargin < 5 || isempty(max_number)
    max_number = size(Aor,2);
 else
@@ -662,8 +670,8 @@ end
            else
                Coor = cell(num_neuron,1);
            end
-           d1 = size(h2.rawdata1.results.Cn,1);
-           d2 = size(h2.rawdata1.results.Cn,2);
+           d1 = h2.rawdata1.results.options.d1,1;
+           d2 = h2.rawdata1.results.options.d2,2;
            %             tmp_kernel = strel('square', 3);
            for m=1:num_neuron
                % smooth the image with median filter
@@ -829,11 +837,13 @@ thr =  str2num(get(handles.thr,'String'));
 with_label = false;
 Coor = get_contours(handles,thr,ind,1);
 handles.Coor = Coor;
-plot_contours(handles.updatedA(:, ind), img, thr,with_label, [], handles.Coor, 2);
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel =size(handles.rawdata1.results.Cn,1);
-y_pixel = size(handles.rawdata1.results.Cn,2);
+x_pixel =handles.rawdata1.results.options.d1;
+y_pixel = handles.rawdata1.results.options.d2;
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
@@ -883,11 +893,13 @@ thr =  str2num(get(handles.thr,'String'));
 with_label = false;
 Coor = get_contours(handles,thr,ind,1);
 handles.Coor = Coor;
-plot_contours(handles.updatedA(:, ind), img, thr,with_label, [], handles.Coor, 2);
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel =size(handles.rawdata1.results.Cn,1);
-y_pixel =size(handles.rawdata1.results.Cn,2);
+x_pixel =handles.rawdata1.results.options.d1;
+y_pixel =handles.rawdata1.results.options.d2;
 xlim(handles.ax2,[0 x_pixel])
 ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
