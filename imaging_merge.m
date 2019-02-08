@@ -121,11 +121,11 @@ img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
 with_label = false;
-Coor = get_contours(handles,thr,ind,0);
+Coor = get_contours(handles,thr,ind,1);
 handles.Coor = Coor;
 d1 = handles.rawdata1.results.options.d1;
 d2 = handles.rawdata1.results.options.d2;
-plot_contours(handles.rawdata1.results.A(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
 x_pixel = handles.rawdata1.results.options.d1;
@@ -169,16 +169,15 @@ cc(ind0)=[];
 axes(handles.ax2);
 imagesc(handles.rawdata1.results.Cn',[0 1]);
 set(handles.ax2,'YDir','normal')
-set(handles.ax2,'YDir','normal')
 img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
 with_label = false;
-Coor = get_contours(handles,thr,ind,0);
+Coor = get_contours(handles,thr,ind,1);
 handles.Coor = Coor;
 d1 = handles.rawdata1.results.options.d1;
 d2 = handles.rawdata1.results.options.d2;
-plot_contours(handles.rawdata1.results.A(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
 x_pixel = handles.rawdata1.results.options.d1;
@@ -269,6 +268,8 @@ set(handles.mergelist,'String',[]);
 set(handles.merge_alert,'String','Done merging! Restart the gui if you need to redo merging')
 handles.pwdist=[];
 handles.crosscoef=[];
+handles.r=[];
+handles.co=[];
 guidata(hObject,handles);
 
 
@@ -280,10 +281,14 @@ function save_Callback(hObject, eventdata, handles)
 
 folder_name = uigetdir;
 file_str = sprintf('%s\\updated_Craw.mat',folder_name);
-C_raw = handles.updatedresults;
-contours = handles.updatedA;
+updated_results = handles.rawdata1.results;
+updated_results.C_raw = handles.updatedresults;
+updated_results.A =  handles.updatedA;
+fig1_str = sprintf('%s\\corrVsdist.png',folder_name);
 
-save(file_str,'C_raw','contours');
+saveas(handles.distcorr,fig1_str);
+
+save(file_str,'updated_results');
 save_str = sprintf('Saved at %s',file_str);
 set(handles.save_text,'String',save_str);
 guidata(hObject,handles);
@@ -400,6 +405,8 @@ str = sprintf('Updated number of neurons - %d',size(handles.updatedresults,1))
 set(handles.N_final,'String',str);
 handles.pwdist = [];
 handles.crosscoef=[];
+handles.r=[];
+handles.co=[];
 guidata(hObject,handles);
 
 
@@ -420,6 +427,7 @@ tmp = handles.updatedresults;
  plot(handles.ax1,tmp(k,:),'-r');
  str = sprintf(' SNR- %0.2d',handles.SNR(k));
 title(handles.ax1,str);
+axes(handles.ax2)
 imagesc(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
 set(handles.ax2,'YDir','normal')
@@ -792,6 +800,7 @@ tmp = handles.updatedresults;
 plot(handles.ax1,tmp(k,:),'-r');
 str = sprintf(' SNR- %0.2d Cell no - %d',handles.SNR(k),k);
 title(handles.ax1,str);
+axes(handles.ax2)
 imagesc(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
 set(handles.ax2,'YDir','normal')
@@ -978,7 +987,7 @@ img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
 with_label = false;
-Coor = get_contours(handles,thr,ind,0);
+Coor = get_contours(handles,thr,ind,1);
 handles.Coor = Coor;
 d1 = handles.rawdata1.results.options.d1;
 d2 = handles.rawdata1.results.options.d2;
@@ -1012,4 +1021,6 @@ plot(handles.distcorr,pw,cc,'.r','LineStyle','none','MarkerSize',10);
 hold(handles.distcorr,'on')
 plot(handles.distcorr,handles.pwdist(handles.r(1),handles.co(1)),handles.crosscoef(handles.r(1),handles.co(1)),'.k','LineStyle','none','MarkerSize',15)
 hold(handles.distcorr,'off')
+axes(handles.histsnr)
+histogram(handles.SNR);
 guidata(hObject,handles)
