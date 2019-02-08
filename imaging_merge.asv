@@ -83,7 +83,6 @@ function LoadFile_Callback(hObject, eventdata, handles)
 handles.rawdata1=load([filepath1 filename1]);
 handles.N_neurons = size(handles.rawdata1.results.C_raw,1);
 handles.updatedresults = handles.rawdata1.results.C_raw;
-handles.updatedA = handles.rawdata1.results.A;
 handles.mergecells = [];
 handles.delcells=[];
 guidata(hObject,handles)
@@ -268,7 +267,7 @@ handles.updatedA(:,tmp2)=[];
 set(handles.mergelist,'String',[]);
 set(handles.merge_alert,'String','Done merging! Restart the gui if you need to redo merging')
 handles.pwdist=[];
-handles.crosscoef=[];
+handles.corrcoef=[];
 guidata(hObject,handles);
 
 
@@ -399,7 +398,7 @@ handles.updatedA(:,k1)=[];
 str = sprintf('Updated number of neurons - %d',size(handles.updatedresults,1))
 set(handles.N_final,'String',str);
 handles.pwdist = [];
-handles.crosscoef=[];
+handles.corrcoef=[];
 guidata(hObject,handles);
 
 
@@ -937,8 +936,7 @@ function update_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 Cent_N = zeros(size(handles.updatedresults,1),2);
-handles.N_neurons = size(handles.updatedresults,1);
-A = reshape(full(handles.updatedA)',handles.N_neurons,handles.rawdata1.results.options.d1,handles.rawdata1.results.options.d2);
+A = reshape(full(handles.rawdata1.results.A)',handles.N_neurons,handles.rawdata1.results.options.d1,handles.rawdata1.results.options.d2);
 for i = 1:handles.N_neurons
     [tmp_r,tmp_c] = find(squeeze(A(i,:,:)));
     Cent_N(i,:) =[mean(tmp_r) mean(tmp_c)];
@@ -1007,7 +1005,7 @@ end
 set(handles.slidertoaddtodellist,'Min',1,'Max',size(handles.updatedresults,1),'SliderStep',[1/(size(handles.updatedresults,1)-1),1],'Value',1)
 str2 = sprintf('%d pairs of neurons satisfy the thresholds',length(handles.r));
 set(handles.n_pair,'String',str2);
-
+handles.updatedA = handles.rawdata1.results.A;
 plot(handles.distcorr,pw,cc,'.r','LineStyle','none','MarkerSize',10);
 hold(handles.distcorr,'on')
 plot(handles.distcorr,handles.pwdist(handles.r(1),handles.co(1)),handles.crosscoef(handles.r(1),handles.co(1)),'.k','LineStyle','none','MarkerSize',15)
