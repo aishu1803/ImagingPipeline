@@ -86,6 +86,9 @@ handles.updatedresults = handles.rawdata1.results.C_raw;
 handles.updatedA = handles.rawdata1.results.A;
 handles.mergecells = [];
 handles.delcells=[];
+set(handles.cell1,'String',[]);
+set(handles.cell2,'String',[]);
+set(handles.deletelist,'String',[]);
 guidata(hObject,handles)
 
 
@@ -281,14 +284,14 @@ function save_Callback(hObject, eventdata, handles)
 
 folder_name = uigetdir;
 file_str = sprintf('%s\\updated_Craw.mat',folder_name);
-updated_results = handles.rawdata1.results;
-updated_results.C_raw = handles.updatedresults;
-updated_results.A =  handles.updatedA;
+results = handles.rawdata1.results;
+results.C_raw = handles.updatedresults;
+results.A =  handles.updatedA;
 fig1_str = sprintf('%s\\corrVsdist.png',folder_name);
 
 saveas(handles.distcorr,fig1_str);
 
-save(file_str,'updated_results');
+save(file_str,'results');
 save_str = sprintf('Saved at %s',file_str);
 set(handles.save_text,'String',save_str);
 guidata(hObject,handles);
@@ -398,7 +401,7 @@ function del_Callback(hObject, eventdata, handles)
 % hObject    handle to del (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-k1 = get(handles.deletelist,'String');
+k1 = str2num(get(handles.deletelist,'String'));
 handles.updatedresults(k1,:)=[];
 handles.updatedA(:,k1)=[];
 str = sprintf('Updated number of neurons - %d',size(handles.updatedresults,1))
@@ -972,7 +975,8 @@ plot(handles.ax1,C(handles.r(1),:),'-r');
 hold(handles.ax1,'on')
 plot(handles.ax1,C(handles.co(1),:),'-b');
 hold(handles.ax1,'off')
-
+set(handles.cell1,'String',handles.r);
+set(handles.cell2,'String',handles.co)
 str = sprintf('Cell 1 - %d \n Cell 2 - %d \n Dist b/w them - %0.2d Crosscorr - %0.2d', handles.r(1),handles.co(1),handles.pwdist(handles.r(1),handles.co(1)),handles.crosscoef(handles.r(1),handles.co(1)));
 title(handles.ax1,str);
 legend(handles.ax1,'Cell 1','Cell 2');
