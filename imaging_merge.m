@@ -117,9 +117,9 @@ ind0 = find(pw==0);
 pw(ind0)=[];
 cc(ind0)=[];
 axes(handles.ax2);
-imagesc(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
-set(handles.ax2,'YDir','normal')
+
 img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
@@ -170,8 +170,8 @@ ind0 = find(pw==0);
 pw(ind0)=[];
 cc(ind0)=[];
 axes(handles.ax2);
-imagesc(handles.rawdata1.results.Cn',[0 1]);
-set(handles.ax2,'YDir','normal')
+imshow(handles.rawdata1.results.Cn',[0 1]);
+
 img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
@@ -431,9 +431,9 @@ tmp = handles.updatedresults;
  str = sprintf(' SNR- %0.2d',handles.SNR(k));
 title(handles.ax1,str);
 axes(handles.ax2)
-imagesc(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
-set(handles.ax2,'YDir','normal')
+
 img = handles.rawdata1.results.Cn;
 ind = k;
 thr =  str2num(get(handles.thr,'String'));
@@ -804,9 +804,9 @@ plot(handles.ax1,tmp(k,:),'-r');
 str = sprintf(' SNR- %0.2d Cell no - %d',handles.SNR(k),k);
 title(handles.ax1,str);
 axes(handles.ax2)
-imagesc(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
-set(handles.ax2,'YDir','normal')
+
 img = handles.rawdata1.results.Cn;
 ind = k;
 thr =  str2num(get(handles.thr,'String'));
@@ -860,9 +860,9 @@ hold(handles.ax1,'off')
 str = sprintf('Cell 1 - %d \n Cell 2 - %d \n ',tmp(1),tmp(2));
 title(handles.ax1,str);
 legend(handles.ax1,'Cell 1','Cell 2');
-imagesc(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
-set(handles.ax2,'YDir','normal')
+
 img = handles.rawdata1.results.Cn;
 ind = tmp;
 thr =  str2num(get(handles.thr,'String'));
@@ -984,9 +984,9 @@ handles.currentcompare = 1;
 [r1,c1] = find(squeeze(A(handles.r(1),:,:)));
 [r2,c2] = find(squeeze(A(handles.co(1),:,:)));
 axes(handles.ax2);
-imagesc(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn',[0 1]);
 hold(handles.ax2,'on')
-set(handles.ax2,'YDir','normal')
+
 img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
 thr =  str2num(get(handles.thr,'String'));
