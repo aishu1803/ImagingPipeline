@@ -294,6 +294,20 @@ saveas(handles.distcorr,fig1_str);
 save(file_str,'results');
 save_str = sprintf('Saved at %s',file_str);
 set(handles.save_text,'String',save_str);
+axes(handles.ax2);
+imshow(handles.rawdata1.results.Cn',[0 1]);
+
+img = handles.rawdata1.results.Cn;
+ind = 1:size(handles.updatedA,2);
+thr =  str2num(get(handles.thr,'String'));
+with_label = false;
+Coor = get_contours(handles,thr,ind,1);
+handles.Coor = Coor;
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
+colormap gray;
+hold(handles.ax2,'off')
 guidata(hObject,handles);
 
 
