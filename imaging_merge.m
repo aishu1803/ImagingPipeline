@@ -117,7 +117,7 @@ ind0 = find(pw==0);
 pw(ind0)=[];
 cc(ind0)=[];
 axes(handles.ax2);
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 hold(handles.ax2,'on')
 
 img = handles.rawdata1.results.Cn;
@@ -131,10 +131,10 @@ d2 = handles.rawdata1.results.options.d2;
 plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
-xlim(handles.ax2,[0 x_pixel])
-ylim(handles.ax2,[0 y_pixel])
+% x_pixel = handles.rawdata1.results.options.d1;
+% y_pixel = handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells')
 plot(handles.distcorr,pw,cc,'.r','LineStyle','none','MarkerSize',10);
 hold(handles.distcorr,'on')
@@ -170,7 +170,7 @@ ind0 = find(pw==0);
 pw(ind0)=[];
 cc(ind0)=[];
 axes(handles.ax2);
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 
 img = handles.rawdata1.results.Cn;
 ind = [handles.r(handles.currentcompare) handles.co(handles.currentcompare)];
@@ -183,10 +183,10 @@ d2 = handles.rawdata1.results.options.d2;
 plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
-xlim(handles.ax2,[0 x_pixel])
-ylim(handles.ax2,[0 y_pixel])
+% x_pixel = handles.rawdata1.results.options.d1;
+% y_pixel = handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells')
 plot(handles.distcorr,pw,cc,'.r','LineStyle','none','MarkerSize',10);
 hold(handles.distcorr,'on')
@@ -295,7 +295,7 @@ save(file_str,'results');
 save_str = sprintf('Saved at %s',file_str);
 set(handles.save_text,'String',save_str);
 axes(handles.ax2);
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 
 img = handles.rawdata1.results.Cn;
 ind = 1:size(handles.updatedA,2);
@@ -445,7 +445,7 @@ tmp = handles.updatedresults;
  str = sprintf(' SNR- %0.2d',handles.SNR(k));
 title(handles.ax1,str);
 axes(handles.ax2)
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 hold(handles.ax2,'on')
 
 img = handles.rawdata1.results.Cn;
@@ -459,10 +459,10 @@ d2 = handles.rawdata1.results.options.d2;
 plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
-xlim(handles.ax2,[0 x_pixel])
-ylim(handles.ax2,[0 y_pixel])
+% x_pixel = handles.rawdata1.results.options.d1;
+% y_pixel = handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
 
  
@@ -818,7 +818,7 @@ plot(handles.ax1,tmp(k,:),'-r');
 str = sprintf(' SNR- %0.2d Cell no - %d',handles.SNR(k),k);
 title(handles.ax1,str);
 axes(handles.ax2)
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 hold(handles.ax2,'on')
 
 img = handles.rawdata1.results.Cn;
@@ -832,10 +832,10 @@ d2 = handles.rawdata1.results.options.d2;
 plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel =handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
-xlim(handles.ax2,[0 x_pixel])
-ylim(handles.ax2,[0 y_pixel])
+% x_pixel =handles.rawdata1.results.options.d1;
+% y_pixel = handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
 
 
@@ -874,7 +874,7 @@ hold(handles.ax1,'off')
 str = sprintf('Cell 1 - %d \n Cell 2 - %d \n ',tmp(1),tmp(2));
 title(handles.ax1,str);
 legend(handles.ax1,'Cell 1','Cell 2');
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 hold(handles.ax2,'on')
 
 img = handles.rawdata1.results.Cn;
@@ -888,10 +888,10 @@ d2 = handles.rawdata1.results.options.d2;
 plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel =handles.rawdata1.results.options.d1;
-y_pixel =handles.rawdata1.results.options.d2;
-xlim(handles.ax2,[0 x_pixel])
-ylim(handles.ax2,[0 y_pixel])
+% x_pixel =handles.rawdata1.results.options.d1;
+% y_pixel =handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
 guidata(hObject,handles);
 
@@ -998,7 +998,7 @@ handles.currentcompare = 1;
 [r1,c1] = find(squeeze(A(handles.r(1),:,:)));
 [r2,c2] = find(squeeze(A(handles.co(1),:,:)));
 axes(handles.ax2);
-imshow(handles.rawdata1.results.Cn',[0 1]);
+imshow(handles.rawdata1.results.Cn,[0 1]);
 hold(handles.ax2,'on')
 
 img = handles.rawdata1.results.Cn;
@@ -1013,10 +1013,10 @@ d2 = handles.rawdata1.results.options.d2;
 plot_contours(handles.rawdata1.results.A(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
 colormap gray;
 hold(handles.ax2,'off')
-x_pixel = handles.rawdata1.results.options.d1;
-y_pixel = handles.rawdata1.results.options.d2;
-xlim(handles.ax2,[0 x_pixel])
-ylim(handles.ax2,[0 y_pixel])
+% x_pixel = handles.rawdata1.results.options.d1;
+% y_pixel = handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
 title(handles.ax2,'Spatial locations of the cells');
 minpeakdist = 3; %hardcoded at least three frames between spikes
 for i = 1:size(handles.rawdata1.results.C_raw,1)

@@ -112,7 +112,7 @@ if handles.currentcell~=1
 tmp_nosepokenogo=[];
 tmp_nosepokego=[];
 tmp_reward = [];
-tmp_leverpress=[];
+tmp_leverpress=[];nogo=[];go=[];
 for i = 1:length(handles.indnogoreward)
     tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)-15:round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)+90)];
 end
@@ -121,13 +121,27 @@ for i = 1:length(handles.indgoreward)
 end
 for i = 1:length(handles.indreward)
     tmp_reward = [tmp_reward; handles.tr.trials(handles.indreward(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indreward(i)).rewardframe-15:handles.tr.trials(handles.indreward(i)).rewardframe+30)];
+    if handles.tr.trials(handles.indreward(i)).nogo
+        nogo = [nogo i];
+    else
+        go = [go i];
+    end
 end
 for i = 1:length(handles.indleverpress)
     tmp_leverpress = [tmp_leverpress; handles.tr.trials(handles.indleverpress(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indleverpress(i)).leverpressframe-15:handles.tr.trials(handles.indleverpress(i)).leverpressframe+30)];
 end
+axes(handles.nphold)
 plot(handles.nphold,-15:1:90,mean(tmp_nosepokenogo),'-r')
 hold(handles.nphold,'on')
 plot(handles.nphold,-15:1:60,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
+xdata_nogo = [-15:1:90 90:-1:-15];
+xdata_go = [-15:1:60 60:-1:-15];
+sem_nogo = std(tmp_nosepokenogo)/sqrt(size(tmp_nosepokenogo,1));
+sem_go = std(tmp_nosepokego)/sqrt(size(tmp_nosepokego,1));
+ydata_nogo = [mean(tmp_nosepokenogo)-sem_nogo fliplr(mean(tmp_nosepokenogo)+sem_nogo)];
+ydata_go = [mean(tmp_nosepokego)-sem_go fliplr(mean(tmp_nosepokego)+sem_go)];
+patch(xdata_nogo,ydata_nogo,'r','FaceAlpha','0.2','EdgeColor','none');
+patch(xdata_go,ydata_go,[0 0.8 0],'FaceAlpha','0.2','EdgeColor','none');
 set(handles.nphold,'Box','off')
 % 
 yy = get(handles.nphold,'YLim');
@@ -161,9 +175,12 @@ xlim(handles.spatialcell,[0 x_pixel])
 ylim(handles.spatialcell,[0 y_pixel])
 title(handles.spatialcell,'Spatial locations of the cells');
 axes(handles.reward)
-plot(handles.reward,-15:1:30,mean(tmp_reward),'-r')
+plot(handles.reward,-15:1:30,mean(tmp_reward(nogo,:)),'-r')
+hold(handles.reward,'on')
+plot(handles.reward,-15:1:30,mean(tmp_reward(go,:)),'-','color',[0 0.8 0])
 title('Rewarded Trials')
 line(handles.reward,[0 0],ylim,'color','black','LineStyle',':')
+hold(handles.reward,'off')
 axes(handles.leverpress)
 plot(handles.leverpress,-15:1:30,mean(tmp_leverpress),'LineStyle','-','color',[0 0.8 0])
 title('Go trials aligned to lever press')
@@ -186,6 +203,7 @@ tmp_nosepokenogo=[];
 tmp_nosepokego=[];
 tmp_reward = [];
 tmp_leverpress=[];
+nogo=[];go=[];
 for i = 1:length(handles.indnogoreward)
     tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)-15:round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)+90)];
 end
@@ -194,13 +212,27 @@ for i = 1:length(handles.indgoreward)
 end
 for i = 1:length(handles.indreward)
     tmp_reward = [tmp_reward; handles.tr.trials(handles.indreward(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indreward(i)).rewardframe-15:handles.tr.trials(handles.indreward(i)).rewardframe+30)];
+    if handles.tr.trials(handles.indreward(i)).nogo
+        nogo = [nogo i];
+    else
+        go = [go i];
+    end
 end
 for i = 1:length(handles.indleverpress)
     tmp_leverpress = [tmp_leverpress; handles.tr.trials(handles.indleverpress(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indleverpress(i)).leverpressframe-15:handles.tr.trials(handles.indleverpress(i)).leverpressframe+30)];
 end
+axes(handles.nphold)
 plot(handles.nphold,-15:1:90,mean(tmp_nosepokenogo),'-r')
 hold(handles.nphold,'on')
 plot(handles.nphold,-15:1:60,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
+xdata_nogo = [-15:1:90 90:-1:-15];
+xdata_go = [-15:1:60 60:-1:-15];
+sem_nogo = std(tmp_nosepokenogo)/sqrt(size(tmp_nosepokenogo,1));
+sem_go = std(tmp_nosepokego)/sqrt(size(tmp_nosepokego,1));
+ydata_nogo = [mean(tmp_nosepokenogo)-sem_nogo fliplr(mean(tmp_nosepokenogo)+sem_nogo)];
+ydata_go = [mean(tmp_nosepokego)-sem_go fliplr(mean(tmp_nosepokego)+sem_go)];
+patch(xdata_nogo,ydata_nogo,'r','FaceAlpha','0.2','EdgeColor','none');
+patch(xdata_go,ydata_go,[0 0.8 0],'FaceAlpha','0.2','EdgeColor','none');
 set(handles.nphold,'Box','off')
 % 
 yy = get(handles.nphold,'YLim');
@@ -235,9 +267,12 @@ xlim(handles.spatialcell,[0 x_pixel])
 ylim(handles.spatialcell,[0 y_pixel])
 title(handles.spatialcell,'Spatial locations of the cells');
 axes(handles.reward)
-plot(handles.reward,-15:1:30,mean(tmp_reward),'-r')
+plot(handles.reward,-15:1:30,mean(tmp_reward(nogo,:)),'-r')
+hold(handles.reward,'on')
+plot(handles.reward,-15:1:30,mean(tmp_reward(go,:)),'-','color',[0 0.8 0])
 title('Rewarded Trials')
 line(handles.reward,[0 0],ylim,'color','black','LineStyle',':')
+hold(handles.reward,'off')
 axes(handles.leverpress)
 plot(handles.leverpress,-15:1:30,mean(tmp_leverpress),'LineStyle','-','color',[0 0.8 0])
 title('Go trials aligned to lever press')
@@ -256,7 +291,7 @@ k = handles.currentcell;
 tmp_nosepokenogo=[];
 tmp_nosepokego=[];
 tmp_reward = [];
-tmp_leverpress = [];
+tmp_leverpress = [];nogo=[];go=[];
 for i = 1:length(handles.indnogoreward)
     tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)-15:round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)+90)];
 end
@@ -265,15 +300,33 @@ for i = 1:length(handles.indgoreward)
 end
 for i = 1:length(handles.indreward)
     tmp_reward = [tmp_reward; handles.tr.trials(handles.indreward(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indreward(i)).rewardframe-15:handles.tr.trials(handles.indreward(i)).rewardframe+30)];
+    if handles.tr.trials(handles.indreward(i)).nogo
+        nogo = [nogo i];
+    else
+        go = [go i];
+    end
 end
 for i = 1:length(handles.indleverpress)
     tmp_leverpress = [tmp_leverpress; handles.tr.trials(handles.indleverpress(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indleverpress(i)).leverpressframe-15:handles.tr.trials(handles.indleverpress(i)).leverpressframe+30)];
 end
+
+axes(handles.nphold)
 plot(handles.nphold,-15:1:90,mean(tmp_nosepokenogo),'-r')
+
 hold(handles.nphold,'on')
+
 plot(handles.nphold,-15:1:60,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
+xdata_nogo = [-15:1:90 90:-1:-15];
+xdata_go = [-15:1:60 60:-1:-15];
+sem_nogo = std(tmp_nosepokenogo)/sqrt(size(tmp_nosepokenogo,1));
+sem_go = std(tmp_nosepokego)/sqrt(size(tmp_nosepokego,1));
+ydata_nogo = [mean(tmp_nosepokenogo)-sem_nogo fliplr(mean(tmp_nosepokenogo)+sem_nogo)];
+ydata_go = [mean(tmp_nosepokego)-sem_go fliplr(mean(tmp_nosepokego)+sem_go)];
+patch(xdata_nogo,ydata_nogo,'r','FaceAlpha','0.2','EdgeColor','none');
+patch(xdata_go,ydata_go,[0 0.8 0],'FaceAlpha','0.2','EdgeColor','none');
 set(handles.nphold,'Box','off')
 % 
+
 yy = get(handles.nphold,'YLim');
 line(handles.nphold,[0 0],yy,'color','black','LineStyle',':')
 line(handles.nphold,[15 15],yy,'color',[0 0.8 0],'LineStyle',':')
@@ -305,9 +358,12 @@ xlim(handles.spatialcell,[0 x_pixel])
 ylim(handles.spatialcell,[0 y_pixel])
 title(handles.spatialcell,'Spatial locations of the cells');
 axes(handles.reward)
-plot(handles.reward,-15:1:30,mean(tmp_reward),'-k')
+plot(handles.reward,-15:1:30,mean(tmp_reward(nogo,:)),'-r')
+hold(handles.reward,'on')
+plot(handles.reward,-15:1:30,mean(tmp_reward(go,:)),'-','color',[0 0.8 0])
 title('Rewarded Trials')
 line(handles.reward,[0 0],ylim,'color','black','LineStyle',':')
+hold(handles.reward,'off')
 axes(handles.leverpress)
 plot(handles.leverpress,-15:1:30,mean(tmp_leverpress),'LineStyle','-','color',[0 0.8 0])
 title('Go trials aligned to lever press')
