@@ -1,4 +1,4 @@
-function [CC,jsf] = plot_contours(Aor,Cn,thr,display_numbers,max_number,Coor, ln_wd, ln_col)
+function [CC,jsf] = plot_contours(Aor,d1,d2,Cn,thr,display_numbers,max_number,Coor, ln_wd, ln_col)
 
 % save and plot the contour traces of the found spatial components againsts
 % specified background image. The contour is drawn around the value above
@@ -25,9 +25,7 @@ fontname = 'helvetica';
 %     set(gcf, 'PaperUnits', units,'Units', units)
 %     set(gcf, 'PaperPosition',[5, 5, 12, 12])
 %     set(gcf, 'Position',3*[5, 5, 12, 12])
-[d1,d2] = size(Cn);
-imagesc(Cn,[min(Cn(:)),max(Cn(:))]);
-axis tight; axis equal;
+
 %set(gca,'XTick',[],'YTick',[]);
 posA = get(gca,'position');
 set(gca,'position',posA);
@@ -78,8 +76,9 @@ else
        hold on;
    end
 end
-cm = com(Aor(:,1:end),d1,d2);
+
 if display_numbers
+    cm = com(Aor(:,1:end),d1,d2);
    lbl = strtrim(cellstr(num2str((1:size(Aor,2))')));
    text((cm(1:max_number,2)),(cm(1:max_number,1)),lbl(1:max_number),'color',[0,0,0],'fontsize',16,'fontname',fontname,'fontweight','bold');
 end
