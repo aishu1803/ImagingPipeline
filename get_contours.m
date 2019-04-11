@@ -1,14 +1,14 @@
-%% get contours of the all neurons
-       function Coor = get_contours(obj, thr, ind_show)
-           A_ = obj.A;
-           if exist('ind_show', 'var')
-               A_ = A_(:, ind_show);
-           else
-               ind_show = 1:size(A_, 2);
-           end
-           if ~exist('thr', 'var') || isempty(thr)
-               thr = 0.9;
-           end
+function Coor = get_contours(h2, thr, ind,updated)
+     if updated
+         A_ = h2.A;
+         A_ = A_(:,ind);
+     else
+           A_ = h2.rawdata1.results.A;
+        
+               A_ = A_(:, ind);
+     end
+          
+          
            num_neuron = size(A_,2);
            if num_neuron==0
                Coor ={};
@@ -16,12 +16,12 @@
            else
                Coor = cell(num_neuron,1);
            end
-           d1 = obj.options.d1;
-           d2 = obj.options.d2;
+           d1 = h2.options.d1,1;
+           d2 = h2.options.d2,2;
            %             tmp_kernel = strel('square', 3);
            for m=1:num_neuron
                % smooth the image with median filter
-               A_temp = obj.reshape(full(A_(:, m)),2);
+               A_temp = reshape(full(A_(:, m)),d1,d2);
                % find the threshold for detecting nonzero pixels
 
                A_temp = A_temp(:);
@@ -29,7 +29,7 @@
                temp =  cumsum(temp);
                ff = find(temp > (1-thr)*temp(end),1,'first');
                thr_a = A_temp(ind(ff));
-               A_temp = obj.reshape(A_temp,2);
+               A_temp = reshape(A_temp,d1,d2);
 
                % crop a small region for computing contours
                [tmp1, tmp2, ~] = find(A_temp);
@@ -61,7 +61,7 @@
                h = matlab.graphics.chart.primitive.Contour(pvpairs{:});
                temp = h.ContourMatrix;
                if isempty(temp)
-                   temp = obj.get_contours((thr+1)/2, ind_show(m));
+                   temp = get_contours(hObject,(thr+1)/2, ind_show(m));
                    Coor{m} = temp{1};
                    continue;
                else
@@ -72,16 +72,4 @@
                end
 
            end
-       end
 
-%% reshape data
-       function Y = reshape(obj, Y, dim)
-           % reshape the imaging data into diffrent dimensions
-           d1 = obj.options.d1;
-           d2 = obj.options.d2;
-           if dim==1
-               Y=reshape(Y, d1*d2, []);  %each frame is a vector
-           else
-               Y = reshape(full(Y), d1, d2, []);    %each frame is an image
-           end
-       end
