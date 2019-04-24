@@ -1,6 +1,6 @@
 function [reward_corr,punish_corr] =  BehavioralAnalysis(filename)
-[A,D,E] =  ProcessMedPC(filename);
-n_trials = find(E==4 | E==5);
+[A,D,E] =  ProcessMedPC(filename); % Get all A's,'D's and E's from medpc file
+n_trials = find(E==4 | E==5); % 4/5 
 n_trialstart = find(E==1);
 reward_corr = 0;punish_corr = 0;
 for i = 1:length(n_trials)

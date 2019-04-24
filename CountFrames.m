@@ -14,7 +14,7 @@ for i = 1:length(f)
         cd(str);
         f1 = dir(str);
         if  length(f1)==5
-            if f1(5).bytes>1028
+            if f1(5).bytes>500
                 data = readtable('timestamp.dat');
                 fno(count) = size(data,1)-2;
                 count = count +1;
