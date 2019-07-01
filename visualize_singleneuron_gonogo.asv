@@ -77,7 +77,7 @@ varargout{1} = handles.output;
 function ldresults_Callback(hObject, eventdata, handles)
 % hObject    handle to ldresults (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    strucclture with handles and user data (see GUIDATA)
+% handles    structure with handles and user data (see GUIDATA)
 [filename1,filepath1]=uigetfile({'*.*','All Files'},...
   'Select Data File 1');
 handles.rawdata1=load([filepath1 filename1]);
@@ -114,10 +114,10 @@ tmp_nosepokego=[];
 tmp_reward = [];
 tmp_leverpress=[];nogo=[];go=[];
 for i = 1:length(handles.indnogoreward)
-    tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)-15:round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)+15)];
+    tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)-7:round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)+7)];
 end
 for i = 1:length(handles.indgoreward)
-    tmp_nosepokego = [tmp_nosepokego; handles.tr.trials(handles.indgoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)-15:round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)+15)];
+    tmp_nosepokego = [tmp_nosepokego; handles.tr.trials(handles.indgoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)-7:round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)+7)];
 end
 for i = 1:length(handles.indreward)
     tmp_reward = [tmp_reward; handles.tr.trials(handles.indreward(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indreward(i)).rewardframe-15:handles.tr.trials(handles.indreward(i)).rewardframe+15)];
@@ -131,11 +131,11 @@ for i = 1:length(handles.indleverpress)
     tmp_leverpress = [tmp_leverpress; handles.tr.trials(handles.indleverpress(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indleverpress(i)).leverpressframe-15:handles.tr.trials(handles.indleverpress(i)).leverpressframe+15)];
 end
 axes(handles.nphold)
-plot(handles.nphold,-15:1:15,mean(tmp_nosepokenogo),'-r')
+plot(handles.nphold,-7:1:7,mean(tmp_nosepokenogo),'-r')
 hold(handles.nphold,'on')
-plot(handles.nphold,-15:1:15,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
-xdata_nogo = [-15:1:15 15:-1:-15];
-xdata_go = [-15:1:15 15:-1:-15];
+plot(handles.nphold,-7:1:7,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
+xdata_nogo = [-7:1:7 7:-1:-7];
+xdata_go = [-7:1:7 7:-1:-7];
 sem_nogo = std(tmp_nosepokenogo)/sqrt(size(tmp_nosepokenogo,1));
 sem_go = std(tmp_nosepokego)/sqrt(size(tmp_nosepokego,1));
 ydata_nogo = [mean(tmp_nosepokenogo)-sem_nogo fliplr(mean(tmp_nosepokenogo)+sem_nogo)];
@@ -213,10 +213,10 @@ tmp_reward = [];
 tmp_leverpress=[];
 nogo=[];go=[];
 for i = 1:length(handles.indnogoreward)
-    tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)-15:round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)+15)];
+    tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)-7:round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)+45)];
 end
 for i = 1:length(handles.indgoreward)
-    tmp_nosepokego = [tmp_nosepokego; handles.tr.trials(handles.indgoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)-15:round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)+15)];
+    tmp_nosepokego = [tmp_nosepokego; handles.tr.trials(handles.indgoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indgoreward(i)).nosepokeframe)-7:round(handles.tr.trials(handles.indgoreward(i)).nosepokeframe)+30)];
 end
 for i = 1:length(handles.indreward)
     tmp_reward = [tmp_reward; handles.tr.trials(handles.indreward(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indreward(i)).rewardframe-15:handles.tr.trials(handles.indreward(i)).rewardframe+15)];
@@ -230,11 +230,11 @@ for i = 1:length(handles.indleverpress)
     tmp_leverpress = [tmp_leverpress; handles.tr.trials(handles.indleverpress(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indleverpress(i)).leverpressframe-15:handles.tr.trials(handles.indleverpress(i)).leverpressframe+15)];
 end
 axes(handles.nphold)
-plot(handles.nphold,-15:1:15,mean(tmp_nosepokenogo),'-r')
+plot(handles.nphold,-7:1:45,mean(tmp_nosepokenogo),'-r')
 hold(handles.nphold,'on')
-plot(handles.nphold,-15:1:15,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
-xdata_nogo = [-15:1:15 15:-1:-15];
-xdata_go = [-15:1:15 15:-1:-15];
+plot(handles.nphold,-7:1:30,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
+xdata_nogo = [-7:1:45 45:-1:-7];
+xdata_go = [-7:1:30 30:-1:-7];
 sem_nogo = std(tmp_nosepokenogo)/sqrt(size(tmp_nosepokenogo,1));
 sem_go = std(tmp_nosepokego)/sqrt(size(tmp_nosepokego,1));
 ydata_nogo = [mean(tmp_nosepokenogo)-sem_nogo fliplr(mean(tmp_nosepokenogo)+sem_nogo)];
@@ -246,8 +246,8 @@ set(handles.nphold,'Box','off')
 yy = get(handles.nphold,'YLim');
 line(handles.nphold,[0 0],yy,'color','black','LineStyle',':')
 
-% line(handles.nphold,[7 7],yy,'color',[0 0.8 0],'LineStyle',':')
-% line(handles.nphold,[37 37],yy,'color',[1 0 0],'LineStyle',':')
+line(handles.nphold,[7 7],yy,'color',[0 0.8 0],'LineStyle',':')
+line(handles.nphold,[37 37],yy,'color',[1 0 0],'LineStyle',':')
 legend(handles.nphold,'nogo','go')
  hold(handles.nphold,'off')
 
@@ -309,10 +309,10 @@ tmp_nosepokego=[];
 tmp_reward = [];
 tmp_leverpress = [];nogo=[];go=[];
 for i = 1:length(handles.indnogoreward)
-    tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)-15:round(handles.tr.trials(handles.indnogoreward(i)).nosepokecueoffframe)+15)];
+    tmp_nosepokenogo = [tmp_nosepokenogo; handles.tr.trials(handles.indnogoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)-7:round(handles.tr.trials(handles.indnogoreward(i)).nosepokeframe)+45)];
 end
 for i = 1:length(handles.indgoreward)
-    tmp_nosepokego = [tmp_nosepokego; handles.tr.trials(handles.indgoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)-15:round(handles.tr.trials(handles.indgoreward(i)).nosepokecueoffframe)+15)];
+    tmp_nosepokego = [tmp_nosepokego; handles.tr.trials(handles.indgoreward(i)).C_raw(handles.currentcell,round(handles.tr.trials(handles.indgoreward(i)).nosepokeframe)-7:round(handles.tr.trials(handles.indgoreward(i)).nosepokeframe)+30)];
 end
 for i = 1:length(handles.indreward)
     tmp_reward = [tmp_reward; handles.tr.trials(handles.indreward(i)).C_raw(handles.currentcell,handles.tr.trials(handles.indreward(i)).rewardframe-15:handles.tr.trials(handles.indreward(i)).rewardframe+15)];
@@ -327,13 +327,13 @@ for i = 1:length(handles.indleverpress)
 end
 
 axes(handles.nphold)
-plot(handles.nphold,-15:1:15,mean(tmp_nosepokenogo),'-r')
+plot(handles.nphold,-7:1:45,mean(tmp_nosepokenogo),'-r')
 
 hold(handles.nphold,'on')
 
-plot(handles.nphold,-15:1:15,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
-xdata_nogo = [-15:1:15 15:-1:-15];
-xdata_go = [-15:1:15 15:-1:-15];
+plot(handles.nphold,-7:1:30,mean(tmp_nosepokego),'LineStyle','-','color',[0 0.8 0])
+xdata_nogo = [-7:1:45 45:-1:-7];
+xdata_go = [-7:1:30 30:-1:-7];
 sem_nogo = std(tmp_nosepokenogo)/sqrt(size(tmp_nosepokenogo,1));
 sem_go = std(tmp_nosepokego)/sqrt(size(tmp_nosepokego,1));
 ydata_nogo = [mean(tmp_nosepokenogo)-sem_nogo fliplr(mean(tmp_nosepokenogo)+sem_nogo)];
@@ -345,8 +345,8 @@ set(handles.nphold,'Box','off')
 
 yy = get(handles.nphold,'YLim');
 line(handles.nphold,[0 0],yy,'color','black','LineStyle',':')
-% line(handles.nphold,[7 7],yy,'color',[0 0.8 0],'LineStyle',':')
-% line(handles.nphold,[37 37],yy,'color',[1 0 0],'LineStyle',':')
+line(handles.nphold,[7 7],yy,'color',[0 0.8 0],'LineStyle',':')
+line(handles.nphold,[37 37],yy,'color',[1 0 0],'LineStyle',':')
 legend(handles.nphold,'nogo','go')
  hold(handles.nphold,'off')
 
