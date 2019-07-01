@@ -1,4 +1,4 @@
-function [reward_corr,punish_corr] =  BehavioralAnalysis(filename)
+function [reward_corr,punish_corr,n_errs] =  BehavioralAnalysis(filename)
 [A,D,E] =  ProcessMedPC(filename); % Get all A's,'D's and E's from medpc file
 n_trials = find(E==4 | E==5); % 4/5 
 n_trialstart = find(E==1);
@@ -9,7 +9,7 @@ for i = 1:length(n_trials)
     else
         tmp = E(n_trials(i):n_trialstart(i+1));
     end
-    if length(find(tmp==4)) + length(find(tmp==3))==2
+    if length(find(tmp==4)) + length(find(tmp==3)) + length(find(tmp==4))==1
         reward_corr = reward_corr+1; 
     elseif length(find(tmp==5)) + length(find(tmp==28))==2
         punish_corr = punish_corr+1;
@@ -19,6 +19,16 @@ for i = 1:length(n_trials)
 %         nogo_correct = nogo_correct+1;
 %     elseif length(find(tmp==20))+length(find(tmp==21))==2
 %          nogo_incorrect = nogo_incorrect+1;
+    end
+    if length(find(tmp==4))==1
+        if length(find(E==LNP)) + 
+            ommissions_rew = om
+        end
+       
+    elseif
+        if 
+           ommissions_pun = ommis
+        end
     end
 end
 n_re_trials = length(find(E==4));
