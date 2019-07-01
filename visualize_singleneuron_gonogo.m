@@ -77,7 +77,7 @@ varargout{1} = handles.output;
 function ldresults_Callback(hObject, eventdata, handles)
 % hObject    handle to ldresults (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+% handles    strucclture with handles and user data (see GUIDATA)
 [filename1,filepath1]=uigetfile({'*.*','All Files'},...
   'Select Data File 1');
 handles.rawdata1=load([filepath1 filename1]);
