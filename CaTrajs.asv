@@ -1,4 +1,4 @@
-function [res,perf_go,perf_nogo,peak,seqTrain] = CaTrajs(trials,npoff)
+function res = CaTrajs(trials,npoff)
 
 count = 1;
 for i = 1:length(trials)
@@ -21,7 +21,7 @@ count = 1;
 for i = 1:length(trials)
     if trials(i).reward
     dat2(count).trialId = trials(i).nogo;
-    dat2(count).y = trials(i).C_raw(setdiff(1:size(trials(1).C_raw,1),npoff),:);
+    dat2(count).y = trials(i).C_raw(setdiff(1:size(trials(1).C_raw,1),npoff),trials(i).nosepokeframe:trials(i).nosepokeframe+15);
     dat2(count).T = size(dat2(count).y,2);
     count = count+1;
     end
@@ -42,14 +42,14 @@ for i = 2:length(trials)
 end
 
 figure
-
+for j = 1:100
 nogo_dat = dat(nogo);
 go_dat = dat(go);
-
 % for gg = 1:length(ind_trialsaftererror)
 %     dat(ind_trialsaftererror(gg)).trialId = dat(ind_trialsaftererror(gg)).trialId+5;
 % end
-res = neuralTraj('rat171',dat);
+str = sprintf('%d',rand(1));
+res = neuralTraj(str,dat);
 tt = [];
 for i = 1:length(dat2)
     tt = [tt dat2(i).y];
@@ -110,20 +110,14 @@ subplot(2,4,4)
 plot(pev*100,'-b')
 hold on
 plot(prctile(pev_shuf,97.5,2)*100,'--b')
-line([22 22],ylim,'color','k')
+line([45 45],ylim,'color','k')
 [estparam,seqTrain,seqTest] = postprocess(res);
-for rn = 1:100
-train_no=randsample(99,79);
-test_no = setdiff(1:99,train_no);
-train = seqTrain(train_no);
-train = [train.xorth;];
-train = reshape(train,3,dat(1).T,length(train_no));
-test = seqTrain(test_no);
-test=[test.xorth;];
-test = reshape(test,3,dat(1).T,length(test_no));
-group = [seqTrain(train_no).trialId;];
-testgroup = [seqTrain(test_no).trialId;];
-
+train=[seqTrain.xorth;];
+train = reshape(train,3,dat(1).T,length(seqTrain));
+test=[seqTest.xorth;];
+test = reshape(test,3,dat(1).T,length(seqTest));
+group = [seqTrain.trialId;];
+testgroup = [seqTest.trialId;];
 for i = 1:dat(1).T
     class(i,:) = classify(squeeze(test(:,i,:))',squeeze(train(:,i,:))',group);
     perf(i) = length(find(class(i,:)-testgroup==0))/length(testgroup);
@@ -134,12 +128,11 @@ end
 ind = find(testgroup==1);
 class_nogo = class(:,ind);
 class_go = class(:,setdiff(1:20,ind));
-for i = 1:dat(1).T
-perf_go(rn,i) = length(find(class_go(i,:)-zeros(1,size(class_go,2))==0))*100/size(class_go,2);
+for i = 1:75
+perf_go(j,i) = length(find(class_go(i,:)-zeros(1,size(class_go,2))))*100/size(class_go,2);
 end
-for i = 1:dat(1).T
-perf_nogo(rn,i) = length(find(class_nogo(i,:)-ones(1,size(class_nogo,2))==0))*100/size(class_nogo,2);
-end
+for i = 1:75
+perf_nogo(j,i) = length(find(class_nogo(i,:)-size(class_nogo,2)))*100/size(class_go,2);
 end
 subplot(2,4,5)
 plot3D(seqTrain,'xorth','dimsToPlot',1:3)
@@ -148,9 +141,8 @@ plot(perf*100,'-r')
 hold on
 plot(prctile(perf_shuf,97.5,2)*100,'--r')
 line([45 45],ylim,'color','black')
-[dir_train,~] = trajdir(seqTrain(train_no));
-[dir_test,~] = trajdir(seqTrain(test_no));
-[dir,peak] = trajdir(seqTrain);
+dir_train = trajdir(seqTrain);
+dir_test = trajdir(seqTest);
 dir_test = permute(dir_test,[1 3 2]);
 dir_train = permute(dir_train,[1 3 2]);
 dir_train = [train;dir_train];
@@ -181,13 +173,13 @@ plot(perf_dironly(3:end)*100,'-r')
 hold on
 plot(prctile(perf_dironly_shuf(3:size(perf_dironly_shuf,1),:),97.5,2)*100,'--r');
 line([45 45],ylim,'color','black')
-
+end
 end
 
 
 
 
-function [dir,peak] =  trajdir(seq)
+function dir =  trajdir(seq)
 for i = 1:length(seq)
     dy = diff(seq(i).xorth(2,:))./diff(seq(i).xorth(1,:));
     [b,ind] = max(abs(dy));
@@ -199,21 +191,4 @@ for i = 1:length(seq)
         dir(2,i,j) = atan2d(x,z);
         dir(3,i,j) = atan2d(y,z);
     end
-    diffdir1 = diff(squeeze(dir(1,i,:)));
-    diffdir2 = diff(squeeze(dir(2,i,:)));
-    diffdir3 = diff(squeeze(dir(3,i,:)));
-    for le = 1:length(diffdir1)
-        if diffdir1(le)>180
-            diffdir1(le)  = diffdir1(le) - 360;
-        elseif diffdir2(le)>360
-            diffdir2(le) = diffdir2(le)-360;
-        elseif diffdir3(le)>360
-            diffdir3(le) = diffdir3(le)-360;
-        end   
-    end
-    [~,max_x] = max(abs(diffdir1(3:end)));
-    [~,max_y] = max(abs(diffdir2(3:end)));
-    [~,max_z] = max(abs(diffdir3(3:end)));
-    peak(i) = min([max_x max_y max_z]+3);
-end
 end
