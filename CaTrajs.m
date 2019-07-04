@@ -1,10 +1,10 @@
-function [res,perf_go,perf_nogo,peak,seqTrain] = CaTrajs(trials,npoff)
+function [res,perf_go,perf_nogo,peak,seqTrain] = CaTrajs(trials,npoff,ww)
 
 count = 1;
 for i = 1:length(trials)
     if trials(i).reward
     dat(count).trialId = trials(i).nogo;
-    dat(count).y = trials(i).C_raw(setdiff(1:size(trials(1).C_raw,1),npoff),trials(i).nosepokecueoffframe-44:trials(i).nosepokecueoffframe+30);
+    dat(count).y = trials(i).C_raw(setdiff(1:size(trials(1).C_raw,1),npoff),trials(i).nosepokecueoffframe-22:trials(i).nosepokecueoffframe+15);
     dat(count).T = size(dat(count).y,2);
     count = count+1;
     end
@@ -49,7 +49,7 @@ go_dat = dat(go);
 % for gg = 1:length(ind_trialsaftererror)
 %     dat(ind_trialsaftererror(gg)).trialId = dat(ind_trialsaftererror(gg)).trialId+5;
 % end
-res = neuralTraj('rat171',dat);
+res = neuralTraj('rat3_npenterry1',dat);
 tt = [];
 for i = 1:length(dat2)
     tt = [tt dat2(i).y];
@@ -64,11 +64,11 @@ go_tmp=[];
 subplot(2,4,1)
 imagesc((squeeze(mean(go_percell,3))-repmat(m_tt,1,dat(1).T))./repmat(st_tt,1,dat(1).T))
 hold on
-line([45 45],ylim,'color','white')
+line([ww ww ],ylim,'color','white')
 subplot(2,4,2)
 imagesc((squeeze(mean(nogo_percell,3))-repmat(m_tt,1,dat(1).T))./repmat(st_tt,1,dat(1).T))
 hold on
-line([45 45],ylim,'color','white')
+line([ww ww],ylim,'color','white')
 for i = 1:length(go_dat)
     go_tmp = [go_tmp; mean((go_dat(i).y-repmat(m_tt,1,dat(1).T))./repmat(st_tt,1,dat(1).T))];
 end
@@ -78,14 +78,14 @@ for i = 1:length(nogo_dat)
 end
 y_patch_go = [mean(go_tmp)+(std(go_tmp)/sqrt(size(go_tmp,1))) fliplr(mean(go_tmp)-(std(go_tmp)/sqrt(size(go_tmp,1))))];
 y_patch_nogo = [mean(nogo_tmp)+(std(nogo_tmp)/sqrt(size(nogo_tmp,1))) fliplr(mean(nogo_tmp)-(std(nogo_tmp)/sqrt(size(nogo_tmp,1))))];
-x_patch = [1:75 75:-1:1];
+x_patch = [1:dat(1).T dat(1).T:-1:1];
 subplot(2,4,3)
 plot(mean(go_tmp),'-g')
 hold on
 patch(x_patch,y_patch_go,[0 1 0],'EdgeColor','none','FaceAlpha',0.2)
 plot(mean(nogo_tmp),'-r')
 patch(x_patch,y_patch_nogo,[1 0 0],'EdgeColor','none','FaceAlpha',0.2)
-line([45 45],ylim,'color','black')
+line([ww ww],ylim,'color','black')
 for i = 1:dat(1).T
     tmp=[];
     for j = 1:length(dat)
@@ -110,7 +110,7 @@ subplot(2,4,4)
 plot(pev*100,'-b')
 hold on
 plot(prctile(pev_shuf,97.5,2)*100,'--b')
-line([22 22],ylim,'color','k')
+line([ww ww],ylim,'color','k')
 [estparam,seqTrain,seqTest] = postprocess(res);
 for rn = 1:100
 train_no=randsample(99,79);
@@ -147,7 +147,7 @@ subplot(2,4,6)
 plot(perf*100,'-r')
 hold on
 plot(prctile(perf_shuf,97.5,2)*100,'--r')
-line([45 45],ylim,'color','black')
+line([ww ww],ylim,'color','black')
 [dir_train,~] = trajdir(seqTrain(train_no));
 [dir_test,~] = trajdir(seqTrain(test_no));
 [dir,peak] = trajdir(seqTrain);
@@ -166,7 +166,7 @@ subplot(2,4,7)
 plot(perf_dir(3:end)*100,'-r')
 hold on
 plot(prctile(perf_dir_shuf(3:size(perf_dir_shuf,1),:),97.5,2)*100,'--r')
-line([45 45],ylim,'color','black')
+line([ww ww],ylim,'color','black')
 subplot(2,4,8)
 for i = 3:size(dir_train,2)
     class_dironly(i,:) = classify(squeeze(dir_test(4:6,i,:))',squeeze(dir_train(4:6,i,:))',group);
@@ -180,7 +180,7 @@ end
 plot(perf_dironly(3:end)*100,'-r')
 hold on
 plot(prctile(perf_dironly_shuf(3:size(perf_dironly_shuf,1),:),97.5,2)*100,'--r');
-line([45 45],ylim,'color','black')
+line([ww ww],ylim,'color','black')
 
 end
 
@@ -214,6 +214,6 @@ for i = 1:length(seq)
     [~,max_x] = max(abs(diffdir1(3:end)));
     [~,max_y] = max(abs(diffdir2(3:end)));
     [~,max_z] = max(abs(diffdir3(3:end)));
-    peak(i) = min([max_x max_y max_z]+3);
+     peak(i) = min([max_x max_y max_z]+3);
 end
 end
