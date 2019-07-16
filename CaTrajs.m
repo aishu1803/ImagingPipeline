@@ -49,10 +49,11 @@ go_dat = dat(go);
 % for gg = 1:length(ind_trialsaftererror)
 %     dat(ind_trialsaftererror(gg)).trialId = dat(ind_trialsaftererror(gg)).trialId+5;
 % end
-<<<<<<< HEAD
+
 res = neuralTraj('rat3_npenterry1',dat);
-=======
->>>>>>> 0bbbe5af4abf6e55b14931ea7e21094203a42947
+
+
+
 tt = [];
 for i = 1:length(dat2)
     tt = [tt dat2(i).y];
@@ -67,10 +68,11 @@ go_tmp=[];
 subplot(2,4,1)
 imagesc((squeeze(mean(go_percell,3))-repmat(m_tt,1,dat(1).T))./repmat(st_tt,1,dat(1).T))
 hold on
-<<<<<<< HEAD
+
 line([ww ww ],ylim,'color','white')
-=======
->>>>>>> 0bbbe5af4abf6e55b14931ea7e21094203a42947
+
+line([ww ww],ylim,'color','white')
+
 subplot(2,4,2)
 imagesc((squeeze(mean(nogo_percell,3))-repmat(m_tt,1,dat(1).T))./repmat(st_tt,1,dat(1).T))
 hold on
@@ -217,10 +219,24 @@ for i = 1:length(seq)
             diffdir3(le) = diffdir3(le)-360;
         end   
     end
-<<<<<<< HEAD
-    [~,max_x] = max(abs(diffdir1(3:end)));
-    [~,max_y] = max(abs(diffdir2(3:end)));
-    [~,max_z] = max(abs(diffdir3(3:end)));
-     peak(i) = min([max_x max_y max_z]+3);
+
+    
+   [~,max_x] = sort(abs(diffdir1(3+qq(1):qq(2)-1)),'descend');
+%     ff = max_x - max_x(1);
+%     [~,ind_x] = sort(abs(ff(1:5)),'descend');
+%     peak_x = [max_x(1) max_x(ind_x(1))];
+    [~,max_y] = sort(abs(diffdir2(3+qq(1):qq(2)-1)),'descend');
+%     ff = max_y - max_y(1);
+%     [~,ind_y] = sort(abs(ff(1:5)),'descend');
+%     peak_y = [max_y(1) max_y(ind_y(1))];
+     [~,max_z] = sort(abs(diffdir3(3+qq(1):qq(2)-1)),'descend');
+%      ff = max_z - max_z(1);
+%     [~,ind_z] = sort(abs(ff(1:5)),'descend');
+%     peak_z = [max_z(1) max_z(ind_z(1))];
+%     pe = [peak_x;peak_y;peak_z];
+    peak(i,1) = min([max_x(1) max_y(1) max_z(1)]+3+qq(1));
+%     peak(i,2) = min(pe(:,2));
+    %peak(i) = min([diffdir1 diffdir2 diffdir3]+3);
+
 end
 end
