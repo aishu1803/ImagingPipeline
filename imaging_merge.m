@@ -22,7 +22,7 @@ function varargout = imaging_merge(varargin)
 
 % Edit the above text to modify the response to help imaging_merge
 
-% Last Modified by GUIDE v2.5 08-Feb-2019 09:58:25
+% Last Modified by GUIDE v2.5 23-Jul-2019 15:31:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1042,3 +1042,61 @@ hold(handles.distcorr,'off')
 axes(handles.histsnr)
 histogram(handles.SNR);
 guidata(hObject,handles)
+
+
+% --- Executes on button press in addlazy.
+function addlazy_Callback(hObject, eventdata, handles)
+% hObject    handle to addlazy (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)\
+tt = handles.currentcompare;
+cell_1 = handles.r(tt);
+cell_2 = handles.co(tt);
+m = handles.mergecells;
+m = [m; {mat2str([cell_1 cell_2])} ];
+set(handles.mergelist,'String',m,'Value',length(m))
+handles.mergecells=m;
+guidata(hObject,handles)
+
+
+% --- Executes on button press in checkmerge.
+function checkmerge_Callback(hObject, eventdata, handles)
+% hObject    handle to checkmerge (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmp = [];
+for i = 1:length(handles.mergecells)
+    tmp = [tmp str2num(cell2mat(handles.mergecells(i)))];
+end
+ set(handles.checkmergetxt,'String','Everything is awesome!! ');
+tbl = tabulate(tmp);
+if ~isempty(find(tbl(:,2)>1))
+    str = sprintf('Uh oh. You have cells that are repeated in the list');
+    set(handles.checkmergetxt,'String',[]);
+    set(handles.checkmergetxt,'String',str);
+end
+guidata(hObject,handles)
+    
+
+
+
+function checkmergetxt_Callback(hObject, eventdata, handles)
+% hObject    handle to checkmergetxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of checkmergetxt as text
+%        str2double(get(hObject,'String')) returns contents of checkmergetxt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function checkmergetxt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to checkmergetxt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
