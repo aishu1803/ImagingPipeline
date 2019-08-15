@@ -23,7 +23,7 @@ count = 1;
 for i = 1:length(trials)
     if trials(i).reward
     dat(count).trialId = trials(i).nogo;
-    dat(count).y = trials(i).C_raw(:,trials(i).nosepokecueoffframe-29:trials(i).nosepokecueoffframe+30);
+    dat(count).y = trials(i).C_raw(:,trials(i).nosepokecueoffframe-44:trials(i).nosepokecueoffframe+30);
     dat(count).T = size(dat(count).y,2);
     count = count+1;
     end
@@ -49,7 +49,7 @@ figure
 
 %Change the name under quotes every run. Otherwise it will load the data
 % res that is associated with that name
-res = neuralTraj('rat1_25061',dat);
+res = neuralTraj('rat2_trya2g',dat);
 
 % Build datasets to project in the statespace defined by res
 % Data around task disengagement and task engagement for no-go trials. This
