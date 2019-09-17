@@ -257,24 +257,29 @@ k1 = get(handles.mergelist,'String');
 tmp1=[];
 tmp2=[];
 for i = 1:length(k1)
-    tmp3 = str2num(cell2mat(k1(i)));
-    tmp4 = [handles.rawdata1.results.C_raw(tmp3(1),:);handles.rawdata1.results.C_raw(tmp3(2),:)];
+    tmp3 = sort(str2num(cell2mat(k1(i))),'ascend');
+    tmp4=[];
+for u = 1:length(tmp3)
+    tmp4 = [tmp4;handles.updatedresults(tmp3(u),:)];
+end
     merged_signal(i,:) = mean(tmp4);
-    merged_contour(:,i) = handles.rawdata1.results.A(:,tmp3(1));
+    merged_contour(:,i) = handles.updatedA(:,tmp3(1));
     tmp1 = [tmp1 tmp3(1)];
-    tmp2 = [tmp2 tmp3(2)];
+    tmp2 = [tmp2 tmp3(2:end)];
 end
 handles.updatedresults(tmp1,:) = merged_signal;
 handles.updatedresults(tmp2,:)=[];
 handles.updatedA(:,tmp1) = merged_contour;
 handles.updatedA(:,tmp2)=[];
 set(handles.mergelist,'String',[]);
+% set(handles.mergecells,'String',[]);
 set(handles.merge_alert,'String','Done merging! Restart the gui if you need to redo merging')
 handles.pwdist=[];
 handles.crosscoef=[];
 handles.r=[];
 handles.co=[];
 guidata(hObject,handles);
+
 
 
 % --- Executes on button press in save.
@@ -867,13 +872,12 @@ k2 = get(handles.mergelist,'String');
 tmp = k2(k1);
 tmp = str2num(cell2mat(tmp));
 C=  handles.rawdata1.results.C_raw;
-plot(handles.ax1,C(tmp(1),:),'-r');
+for u = 1:length(tmp)
+plot(handles.ax1,C(tmp(u),:));
 hold(handles.ax1,'on')
-plot(handles.ax1,C(tmp(2),:),'-b');
+end
 hold(handles.ax1,'off')
-str = sprintf('Cell 1 - %d \n Cell 2 - %d \n ',tmp(1),tmp(2));
-title(handles.ax1,str);
-legend(handles.ax1,'Cell 1','Cell 2');
+
 imshow(handles.rawdata1.results.Cn,[0 1]);
 hold(handles.ax2,'on')
 
@@ -962,15 +966,17 @@ function update_Callback(hObject, eventdata, handles)
 % hObject    handle to update (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.SNR=[];
 for i = 1:size(handles.rawdata1.results.C_raw,1)
-    [pk,loc] = findpeaks(handles.updatedC(i,:),'MinPeakDistance',3);
-    P{i} = loc;
-    Pks{i}= pk;
+    pk = max(handles.updatedresults(i,:) - min(handles.updatedresults(i,:)));
+%     P{i} = loc;
+    Pks(i)= pk;
 end
 for i=1:size(handles.updatedresults,1)
     
     [b, sn] = estimate_baseline_noise(handles.updatedresults(i,:));
-    handles.SNR(i) = median(Pks{i})/sn;
+%     handles.SNR(i) = median(Pks{i})/sn;
+    handles.SNR(i) = Pks(i)/sn;
     clear sn;
 end
 ind_snr = find(handles.SNR < str2num(get(handles.snr,'String')));
@@ -1125,19 +1131,23 @@ for i = 1:length(handles.mergecells)
 end
 tbl = tabulate(tmp);
 ind_multi = tbl(find(tbl(:,2)>1),1);
+keep_ind=[];
 for i = 1:length(ind_multi)
     ind_m = find(tmp1(:,1)==ind_multi(i)| tmp1(:,2)==ind_multi(i));
+    keep_ind = [keep_ind; ind_m];
     tmp_multi = [];
     for j = 1:length(ind_m)
         tmp_multi = [tmp_multi tmp1(ind_m(j),:)];
     end
     handles.multimergeids(i).ids= unique(tmp_multi);
 end
-m=[];
+m=handles.mergecells;
+m(keep_ind)=[];
 for k = 1:length(handles.multimergeids)
     m = [m; {mat2str(handles.multimergeids(k).ids)}];
 end
-   set(handles.id,'String',m,'Value',1);
+handles.mergecells = m;
+   set(handles.mergelist,'String',m,'Value',1);
 guidata(hObject,handles)
 
 
