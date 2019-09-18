@@ -278,6 +278,7 @@ handles.pwdist=[];
 handles.crosscoef=[];
 handles.r=[];
 handles.co=[];
+handles.mergecells=[];
 guidata(hObject,handles);
 
 
@@ -392,6 +393,26 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+function snr_Callback(hObject, eventdata, handles)
+% hObject    handle to snr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of snr as text
+%        str2double(get(hObject,'String')) returns contents of snr as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function snr_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to snr (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 % --- Executes on selection change in deletelist.
 function deletelist_Callback(hObject, eventdata, handles)
@@ -401,6 +422,34 @@ function deletelist_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns deletelist contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from deletelist
+k1 = get(handles.deletelist,'Value');
+k2 = str2num(get(handles.deletelist,'String'));
+tmp = k2(k1);
+
+C=  handles.rawdata1.results.C_raw;
+plot(handles.ax1,C(tmp,:));
+
+
+imshow(handles.rawdata1.results.Cn,[0 1]);
+hold(handles.ax2,'on')
+
+img = handles.rawdata1.results.Cn;
+ind = tmp;
+thr =  str2num(get(handles.thr,'String'));
+with_label = false;
+Coor = get_contours(handles,thr,ind,1);
+handles.Coor = Coor;
+d1 = handles.rawdata1.results.options.d1;
+d2 = handles.rawdata1.results.options.d2;
+plot_contours(handles.updatedA(:, ind),d1,d2, img, thr,with_label, [], handles.Coor, 2);
+colormap gray;
+hold(handles.ax2,'off')
+% x_pixel =handles.rawdata1.results.options.d1;
+% y_pixel =handles.rawdata1.results.options.d2;
+% xlim(handles.ax2,[0 x_pixel])
+% ylim(handles.ax2,[0 y_pixel])
+title(handles.ax2,'Spatial locations of the cells');
+guidata(hObject,handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -968,15 +1017,15 @@ function update_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles.SNR=[];
 for i = 1:size(handles.rawdata1.results.C_raw,1)
-    pk = max(handles.updatedresults(i,:) - min(handles.updatedresults(i,:)));
-%     P{i} = loc;
-    Pks(i)= pk;
+    [pk,loc] = findpeaks(handles.updatedC(i,:),3);
+     P{i} = loc;
+    Pks{i}= pk;
 end
 for i=1:size(handles.updatedresults,1)
     
     [b, sn] = estimate_baseline_noise(handles.updatedresults(i,:));
-%     handles.SNR(i) = median(Pks{i})/sn;
-    handles.SNR(i) = Pks(i)/sn;
+     handles.SNR(i) = median(Pks{i})/sn;
+%     handles.SNR(i) = Pks(i)/sn;
     clear sn;
 end
 ind_snr = find(handles.SNR < str2num(get(handles.snr,'String')));
@@ -1127,24 +1176,31 @@ function multimerge_Callback(hObject, eventdata, handles)
 tmp = [];tmp1=[];
 for i = 1:length(handles.mergecells)
     tmp = [tmp str2num(cell2mat(handles.mergecells(i)))];
-    tmp1 = [tmp1; str2num(cell2mat(handles.mergecells(i)))];
 end
+tmp1 = cell2struct(handles.mergecells,'ids',length(handles.mergecells));
 tbl = tabulate(tmp);
 ind_multi = tbl(find(tbl(:,2)>1),1);
 keep_ind=[];
 for i = 1:length(ind_multi)
-    ind_m = find(tmp1(:,1)==ind_multi(i)| tmp1(:,2)==ind_multi(i));
-    keep_ind = [keep_ind; ind_m];
+    ind_m = [];
+    for y = 1:size(tmp1,1)
+        if ~isempty(find(str2num(tmp1(y).ids)==ind_multi(i)))
+            ind_m = [ind_m y];
+        end
+    end
+    keep_ind = [keep_ind ind_m];
     tmp_multi = [];
     for j = 1:length(ind_m)
-        tmp_multi = [tmp_multi tmp1(ind_m(j),:)];
+        tmp_multi = [tmp_multi str2num(tmp1(ind_m(j)).ids)];
     end
     handles.multimergeids(i).ids= unique(tmp_multi);
 end
 m=handles.mergecells;
 m(keep_ind)=[];
+if ~isempty(keep_ind)
 for k = 1:length(handles.multimergeids)
     m = [m; {mat2str(handles.multimergeids(k).ids)}];
+end
 end
 handles.mergecells = m;
    set(handles.mergelist,'String',m,'Value',1);
@@ -1251,23 +1307,3 @@ end
 
 
 
-function snr_Callback(hObject, eventdata, handles)
-% hObject    handle to snr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of snr as text
-%        str2double(get(hObject,'String')) returns contents of snr as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function snr_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to snr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
