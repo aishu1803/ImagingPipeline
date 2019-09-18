@@ -426,7 +426,7 @@ k1 = get(handles.deletelist,'Value');
 k2 = str2num(get(handles.deletelist,'String'));
 tmp = k2(k1);
 
-C=  handles.rawdata1.results.C_raw;
+C=  handles.updatedresults;
 plot(handles.ax1,C(tmp,:));
 
 
