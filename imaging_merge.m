@@ -1181,19 +1181,33 @@ tmp1 = cell2struct(handles.mergecells,'ids',length(handles.mergecells));
 tbl = tabulate(tmp);
 ind_multi = tbl(find(tbl(:,2)>1),1);
 keep_ind=[];
-for i = 1:length(ind_multi)
+ i =1;
+while i <= length(ind_multi)
     ind_m = [];
+    inte_cells = [];
     for y = 1:size(tmp1,1)
         if ~isempty(find(str2num(tmp1(y).ids)==ind_multi(i)))
             ind_m = [ind_m y];
+            inte_cells = [inte_cells str2num(tmp1(y).ids)];
         end
     end
-    keep_ind = [keep_ind ind_m];
+    inte_cells = setdiff(unique(inte_cells),ind_multi(i));
+    for tt = 1:length(inte_cells)
+        for yy = 1:size(tmp1,1)
+            if ~isempty(find(str2num(tmp1(yy).ids)==inte_cells(tt)))
+                ind_m = [ind_m yy];
+            end
+        end
+    end
+    keep_ind = [keep_ind unique(ind_m)];
     tmp_multi = [];
     for j = 1:length(ind_m)
         tmp_multi = [tmp_multi str2num(tmp1(ind_m(j)).ids)];
     end
     handles.multimergeids(i).ids= unique(tmp_multi);
+    [~,ia,~] = intersect(ind_multi,unique(tmp_multi));
+    ind_multi(ia)=[];
+    i = i+1;
 end
 m=handles.mergecells;
 m(keep_ind)=[];
@@ -1202,6 +1216,9 @@ for k = 1:length(handles.multimergeids)
     m = [m; {mat2str(handles.multimergeids(k).ids)}];
 end
 end
+rep_ind=[];
+m_copy = m;
+m = unique(m_copy);
 handles.mergecells = m;
    set(handles.mergelist,'String',m,'Value',1);
 guidata(hObject,handles)

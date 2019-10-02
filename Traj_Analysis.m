@@ -1,4 +1,4 @@
-function [res] = Traj_Analysis(trials)
+function [res,seqNogoEng,seqgoEng] = Traj_Analysis(trials)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Aishwarya Parthasarathy, last updated - 29/7/2019
 % this code plots the neural trajectories for the calciumimaging data recorded during
@@ -23,7 +23,7 @@ count = 1;
 for i = 1:length(trials)
     if trials(i).reward
     dat(count).trialId = trials(i).nogo;
-    dat(count).y = trials(i).C_raw(:,trials(i).nosepokecueoffframe-44:trials(i).nosepokecueoffframe+30);
+    dat(count).y = trials(i).C_raw(:,trials(i).nosepokecueoffframe-22:trials(i).nosepokecueoffframe+15);
     dat(count).T = size(dat(count).y,2);
     count = count+1;
     end
@@ -49,7 +49,7 @@ figure
 
 %Change the name under quotes every run. Otherwise it will load the data
 % res that is associated with that name
-res = neuralTraj('rat2_trya2g',dat);
+res = neuralTraj('rat3_newtrya2g',dat);
 
 % Build datasets to project in the statespace defined by res
 % Data around task disengagement and task engagement for no-go trials. This
@@ -58,7 +58,7 @@ res = neuralTraj('rat2_trya2g',dat);
 %For task engagement - we are computing trajectories from data 1s before
 %nosepoke entry to 1s after nosepoke entry.
 for i = 1:length(nogo)
-dat_nogo_eng(i).y = trials_corr(nogo(i)).C_raw(:,trials_corr(nogo(i)).nosepokeframe-29:trials_corr(nogo(i)).nosepokeframe+30);
+dat_nogo_eng(i).y = trials_corr(nogo(i)).C_raw(:,trials_corr(nogo(i)).nosepokeframe-14:trials_corr(nogo(i)).nosepokeframe+60);
 dat_nogo_eng(i).trialId = trials_corr(nogo(i)).nogo;
 dat_nogo_eng(i).T = size(dat_nogo_eng(i).y,2);
 end
@@ -72,7 +72,7 @@ seqNogoEng = getTrajNewTrials(res, dat_nogo_eng);
 %For task disengagement - we are computing trajectories from data 1s before
 %nosepoke exit to 1s after nosepoke exit.
 for i = 1:length(nogo)
-dat_nogo_diseng(i).y = trials_corr(nogo(i)).C_raw(:,trials_corr(nogo(i)).nosepokecueoffframe-29:trials_corr(nogo(i)).nosepokecueoffframe+30);
+dat_nogo_diseng(i).y = trials_corr(nogo(i)).C_raw(:,trials_corr(nogo(i)).nosepokecueoffframe-14:trials_corr(nogo(i)).nosepokecueoffframe+15);
 dat_nogo_diseng(i).trialId = 25;
 dat_nogo_diseng(i).T = size(dat_nogo_diseng(i).y,2);
 end
@@ -97,7 +97,7 @@ set(gca,'Box','On','XGrid','On','YGrid','On','ZGrid','On')
 %For task engagement - we are computing trajectories from data 1s before
 %nosepoke entry to 1s after nosepoke entry.
 for i = 1:length(go)
-dat_go_eng(i).y = trials_corr(go(i)).C_raw(:,trials_corr(go(i)).nosepokeframe-29:trials_corr(go(i)).nosepokeframe+30);
+dat_go_eng(i).y = trials_corr(go(i)).C_raw(:,trials_corr(go(i)).nosepokeframe-14:trials_corr(go(i)).nosepokeframe+45);
 dat_go_eng(i).trialId = 1;
 dat_go_eng(i).T = size(dat_go_eng(i).y,2);
 end
@@ -111,7 +111,7 @@ seqgoEng = getTrajNewTrials(res, dat_go_eng);
 %For task disengagement - we are computing trajectories from data 1s before
 %lever press to 1s after leverpress
 for i = 1:length(go)
-dat_go_diseng(i).y = trials_corr(go(i)).C_raw(:,trials_corr(go(i)).leverpressframe-29:trials_corr(go(i)).leverpressframe+30);
+dat_go_diseng(i).y = trials_corr(go(i)).C_raw(:,trials_corr(go(i)).leverpressframe-14:trials_corr(go(i)).leverpressframe+15);
 dat_go_diseng(i).trialId = 25;
 dat_go_diseng(i).T = size(dat_go_diseng(i).y,2);
 end
