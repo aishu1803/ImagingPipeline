@@ -16,7 +16,7 @@ function [A,D,E] =  ProcessMedPC(filename)
         tmp = strsplit(tmp{2},'E:');
         D = tmp{1}; %Save c
         
-        tmp = strsplit(tmp{2},'S:');
+        tmp = strsplit(tmp{2},'I:');
         E = tmp{1}; %save D
         
        
