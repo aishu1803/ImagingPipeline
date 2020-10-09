@@ -1,12 +1,5 @@
-function Coor = get_contours(h2, thr, ind,updated)
-     if updated
-         A_ = h2.A;
-         A_ = A_(:,ind);
-     else
-           A_ = h2.rawdata1.results.A;
-        
-               A_ = A_(:, ind);
-     end
+function Coor = get_contours(h2, thr)
+     A_ = h2;
           
           
            num_neuron = size(A_,2);
@@ -16,8 +9,8 @@ function Coor = get_contours(h2, thr, ind,updated)
            else
                Coor = cell(num_neuron,1);
            end
-           d1 = h2.options.d1,1;
-           d2 = h2.options.d2,2;
+           d1 = 240;
+           d2 = 376;
            %             tmp_kernel = strel('square', 3);
            for m=1:num_neuron
                % smooth the image with median filter

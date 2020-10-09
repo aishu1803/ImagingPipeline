@@ -8,9 +8,9 @@ frameno = cumsum(frameno) %cummulative sum of the framenumbers
 [~,D,E] =  ProcessMedPC(medpcfilename); %gets the Events vector 'E' and the time of events vector 'D'
 for i = 1:length(frameno) % Separating 1 long C_raw into separate trials
     if i==1
-        trials(i).C_raw = result.C(:,1:frameno(i));
+        trials(i).C_raw = result.C_raw(:,1:frameno(i));
     else
-        trials(i).C_raw = result.C(:,frameno(i-1):frameno(i));
+        trials(i).C_raw = result.C_raw(:,frameno(i-1):frameno(i));
     end
 end
 for i = 1:length(trials)
@@ -28,30 +28,31 @@ for i = 1:length(trials)
 end
 for i = 1:length(trials)
     if ~isempty(find(trials(i).events==9))
-        ind = find(trials(i).events==9);
-        tim_nosepoke = (trials(i).timing(ind) - trials(i).timing(2))/100;
-        trials(i).nosepokeframe = round(tim_nosepoke*30);
+        tmp = find(trials(i).events==7);
+        ind = find(trials(i).events(tmp:end)==9,1,'first')+tmp - 1;
+        tim_nosepoke = (trials(i).timing(ind) - trials(i).timing(2))/100 ;
+        trials(i).nosepokeframe = round(tim_nosepoke*fps);
     end
 end
 for i = 1:length(trials)
-    if ~isempty(find(trials(i).events==8))
-        ind = find(trials(i).events==8);
+    if ~isempty(find(trials(i).events==9))
+        ind = find(trials(i).events==9,1,'last');
         tim_nosepokecueoff = (trials(i).timing(ind) - trials(i).timing(2))/100;
-        trials(i).nosepokecueoffframe = round(tim_nosepokecueoff*30);
+        trials(i).nosepokecueoffframe = round(tim_nosepokecueoff*fps);
     end
 end
 for i = 1:length(trials)
     if ~isempty(find(trials(i).events==3))
         ind = find(trials(i).events==3);
         tim_reward = (trials(i).timing(ind) - trials(i).timing(2))/100;
-        trials(i).rewardframe = round(tim_reward*30);
+        trials(i).rewardframe = round(tim_reward*fps);
     end
 end
 for i = 1:length(trials)
     if ~isempty(find(trials(i).events==18))
         ind = find(trials(i).events==18);
         tim_leverpress = (trials(i).timing(ind) - trials(i).timing(2))/100;
-        trials(i).leverpress = round(tim_leverpress*30);
+        trials(i).leverpressframe = round(tim_leverpress*fps);
     end
 end
 for i = 1:length(trials)
