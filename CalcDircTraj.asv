@@ -8,12 +8,14 @@ for i = 1:size(trajectories,5)
     y_nogo = smooth(squeeze(trajectories(2,:,1,1,i)));
     
     z_nogo = smooth(squeeze(trajectories(3,:,1,1,i)));
-   
-        t = atan2d(diff(x_nogo),diff(z_nogo));
-       
-    dt = wrapTo180(diff(t));                % angle between lines
+    for j = 1:3:length(x_nogo)
+        if j<length(x_nogo) - 3
+        t(j) = atan2d(x_nogo(j) - x_nogo(j+3),y_nogo(j) - y_nogo(j+3));
+        end
+    end
+    dt = wrapTo180(t);                % angle between lines
     
-    ix = find(abs(dt)>30);
+    ix = find(abs(dt)>9);
     nogo_curves(i).timepoints = ix;
     nogo_curves(i).angles = dt;
 end
@@ -24,7 +26,7 @@ for i = 1:size(trajectories,5)
     
     z_go = smooth(squeeze(trajectories(3,:,2,1,i)));
     
-    t = atan2d(diff(x_go),diff(z_go));
+    t = atan2d(diff(x_go),diff(y_go));
     dt = wrapTo180(diff(t));                % angle between lines
     
     ix_go = find(abs(dt)>30);
