@@ -14,7 +14,7 @@ for i = 1:n_cells
   baseline_dat = mean(tmp(baseline,:),1);
   %baseline_dat = baseline_dat(:);
   for j = 1:size(tmp,1)
-      [~,p(i,j)] = ttest2(tmp(j,:)',baseline_dat');
+      [~,p(i,j),ci(i,j).val] = ttest2(tmp(j,:)',baseline_dat');
   end
   t = find(p(i,:)<0.05);
   N = n_consecutive; % Required number of consecutive numbers following a first one
