@@ -1,8 +1,7 @@
-function [dpca_data,firingRates,firingRatesAverage,trialNum] = DataPreProcess(trials,shuf,dpca)
-
+function [dpca_data,firingRates,firingRatesAverage,trialNum] = DataPreProcessTimeInterval(trials,shuf)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This code z-scores, baseline-subtractes and stretches or shrinks the go trials to match the length of the 
-% nogo trial. 
+% This code z-scores, baseline-subtractes and stretches or shrinks the 3s trials to match the length of the 
+% 8s trials. 
 % Input - 
 % 1) trials - the structure that is of size Ntrials and has fields that
 % correspond to different behavioral paramenters.
@@ -19,21 +18,18 @@ function [dpca_data,firingRates,firingRatesAverage,trialNum] = DataPreProcess(tr
 % each condition. Size - Ncells x Ncond x Noutcome.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Z-scores
-if dpca
-C_raw = [trials.Craw];
+Craw = [trials.Craw];
 C = [trials.C];
 for j = 1:length(trials)
     frameno(j) = size(trials(j).Craw,2);
 end
 frameno = cumsum(frameno);
-for i = 1:size(C_raw,1)
-    m = mean(C_raw(i,:));
-    st = std(C_raw(i,:));
+for i = 1:size(Craw,1)
+    m = mean(Craw(i,:));
+    st = std(Craw(i,:));
     m_c = mean(C(i,:));
     st_c = std(C(i,:));
-    z_C_raw(i,:) = (C_raw(i,:) - repmat(m,1,length(C_raw(i,:))))./repmat(st,1,length(C_raw(i,:)));
+    z_C_raw(i,:) = (Craw(i,:) - repmat(m,1,length(Craw(i,:))))./repmat(st,1,length(Craw(i,:)));
     z_C(i,:) = (C(i,:) - repmat(m_c,1,length(C(i,:))))./repmat(st_c,1,length(C(i,:)));
 end
 for i  = 1:length(trials)
@@ -48,58 +44,39 @@ end
 %% Baseline subtracted
 
 for i = 1:length(trials)
-    npentry = trials(i).nosepokeentryframe;
-    me = mean(trials(i).Craw(:,npentry - 14:npentry-1),2);
-    me_c = mean(trials(i).C(:,npentry - 14:npentry-1),2);
+    
+    me = mean(trials(i).Craw(:,1:30),2);
+    me_c = mean(trials(i).C(:,1:30),2);
     trials(i).Craw = trials(i).Craw - repmat(me,1,size(trials(i).Craw,2));
     trials(i).C = trials(i).C - repmat(me_c,1,size(trials(i).C,2));
    
 end
-end
-%%
 for i = 1:length(trials)
-    if dpca
-        tmp = trials(i).Craw;
-    else
-        tmp = trials(i).Craw;
-    end
-    nogo = trials(i).nogo;
+    
+        tmp = trials(i).C;
+    
+    nogo = trials(i).si;
     rew = trials(i).reward;
-   if ~nogo && rew
-        tim_interest = trials(i).leverpressframe - trials(i).nosepokeentryframe;
-        extrplt_tim = linspace(1,tim_interest,45);
+   if nogo
+       tim_interest = 75-31;
+        extrplt_tim = linspace(1,tim_interest,120);
         
         for j = 1:size(trials(i).Craw,1)
             tmp2 = tmp(j,:);
-            tmp_tt = timeseries(tmp2(trials(i).nosepokeentryframe:trials(i).leverpressframe));
+            tmp_tt = timeseries(tmp2(31:75));
             tmp_tt2 = resample(tmp_tt,extrplt_tim);
-            dpca_data(i).C_raw(j,:) = [tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe) squeeze(tmp_tt2.data)' tmp2(trials(i).leverpressframe+1:trials(i).leverpressframe+20)];
-        end
-    elseif nogo && ~rew
-        tim_interest = trials(i).nosepokecueoffframe - trials(i).nosepokeentryframe;
-        extrplt_tim = linspace(1,tim_interest,45);
-        for j = 1:size(trials(i).Craw,1)
-            tmp2 = tmp(j,:);
-            tmp_tt = timeseries(tmp2(trials(i).nosepokeentryframe:trials(i).nosepokecueoffframe));
-            tmp_tt2 = resample(tmp_tt,extrplt_tim);
-            dpca_data(i).C_raw(j,:) = [tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe) squeeze(tmp_tt2.data)' tmp2(trials(i).nosepokecueoffframe+1:trials(i).nosepokecueoffframe+20)];
-            
+            dpca_data(i).C_raw(j,:) = [tmp2(1:30) squeeze(tmp_tt2.data)' tmp2(76:105)];
         end
    else
-       
-        for j = 1:size(trials(i).Craw,1)
-           tmp2 = tmp(j,:);
-            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+65);
-            
-        end
-    end
+       dpca_data(i).C_raw = tmp(:,1:180);
+   end
+  
 end
-
 for i = 1:length(dpca_data)
 dpca_data(i).reward = trials(i).reward;
 end
 for i = 1:length(dpca_data)
-dpca_data(i).nogo = trials(i).nogo;
+dpca_data(i).nogo = trials(i).si;
 end
 ind_reward = [dpca_data.reward;];
 correct_trials = find(ind_reward);

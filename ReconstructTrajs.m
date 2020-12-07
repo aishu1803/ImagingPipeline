@@ -25,7 +25,7 @@ for i = 1:n_trials
 end
 firingRates_taskonly = permute(firingRates_taskonly,[4 2 3 1 5]);
 firingRates_taskonly(:,1:2,2,:,:) = nan;
-Trajs_taskonly(:,1:2,2,:,:) = nan;
+Trajs_taskonly(:,:,1:2,2,:) = nan;
 for i = 1:n_trials
     firingRates_timeonly(:,1,1,:,i) = squeeze(firingRates(:,1,1,:,i))'*V(:,time_relatedcomptop3)*W(:,time_relatedcomptop3)';
     firingRates_timeonly(:,2,1,:,i) = squeeze(firingRates(:,2,1,:,i))'*V(:,time_relatedcomptop3)*W(:,time_relatedcomptop3)';
@@ -34,14 +34,16 @@ for i = 1:n_trials
 end
 firingRates_timeonly = permute(firingRates_timeonly,[4 2 3 1 5]);
 firingRates_timeonly(:,1:2,2,:,:) = nan;
-Trajs_timeonly(:,1:2,2,:,:) = nan;
-for i = 1:n_trials_err
-    firingRates_timeonly(:,1,2,:,i) = (squeeze(firingRates(:,1,2,:,i))'*V(:,time_relatedcomptop3)*W(:,time_relatedcomptop3)')';
-    firingRates_timeonly(:,2,2,:,i) = (squeeze(firingRates(:,2,2,:,i))'*V(:,time_relatedcomptop3)*W(:,time_relatedcomptop3)')';
-    Trajs_timeonly(:,:,2,2,i) = (squeeze(firingRates(:,2,2,:,i))'*V(:,time_relatedcomp))';
-    Trajs_timeonly(:,:,1,2,i) = (squeeze(firingRates(:,1,2,:,i))'*V(:,time_relatedcomp))';
-    firingRates_taskonly(:,1,2,:,i) = (squeeze(firingRates(:,1,2,:,i))'*V(:,task_relatedcomptop3)*W(:,task_relatedcomptop3)')';
-    firingRates_taskonly(:,2,2,:,i) = (squeeze(firingRates(:,2,2,:,i))'*V(:,task_relatedcomptop3)*W(:,task_relatedcomptop3)')';
-    Trajs_taskonly(:,:,2,2,i) = (squeeze(firingRates(:,2,2,:,i))'*V(:,task_relatedcomp))';
-    Trajs_taskonly(:,:,1,2,i) = (squeeze(firingRates(:,1,2,:,i))'*V(:,task_relatedcomp))';
+Trajs_timeonly(:,:,1:2,2,:) = nan;
+for k = 1:2
+for i = 1:trialNum(1,k,2)
+    firingRates_timeonly(:,k,2,:,i) = (squeeze(firingRates(:,k,2,:,i))'*V(:,time_relatedcomptop3)*W(:,time_relatedcomptop3)')';
+    
+    Trajs_timeonly(:,:,k,2,i) = (squeeze(firingRates(:,k,2,:,i))'*V(:,time_relatedcomp))';
+    
+    firingRates_taskonly(:,k,2,:,i) = (squeeze(firingRates(:,k,2,:,i))'*V(:,task_relatedcomptop3)*W(:,task_relatedcomptop3)')';
+    
+    Trajs_taskonly(:,:,k,2,i) = (squeeze(firingRates(:,k,2,:,i))'*V(:,task_relatedcomp))';
+    
+end
 end
