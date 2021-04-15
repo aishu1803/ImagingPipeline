@@ -115,7 +115,7 @@ end
 % actually read timestamp files
 for i = 1:size(file_list,1)
 
-    clear missing_frames
+    clear missing_frame_start
     
     % open matrix convert to matrix
         timestamp_file = readtable(file_list(i,:));  % read .dat file
