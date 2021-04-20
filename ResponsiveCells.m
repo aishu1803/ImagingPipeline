@@ -36,7 +36,7 @@ else
         baseline_dat = mean(tmp(baseline,:),1);
         %baseline_dat = baseline_dat(:);
         for j = poi
-            [~,p(i,j-poi(1)+1),ci(i,j - poi(1)+1).val] = ttest2(tmp(j,:)',baseline_dat');
+            [~,p(i,j-poi(1)+1),ci(i,j - poi(1)+1).val] = ttest(tmp(j,:)',baseline_dat');
         end
         t = find(p(i,:)<0.05);
         N = n_consecutive; % Required number of consecutive numbers following a first one
