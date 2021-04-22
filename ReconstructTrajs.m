@@ -13,8 +13,8 @@ if n_go_err < n_nogo_err
 else
     n_trials_err = n_nogo_err;
 end
-task_relatedcomptop3 = find(whichMarg~=3,3);
-task_relatedcomp = find(whichMarg~=3);
+task_relatedcomptop3 = find(whichMarg==1 | whichMarg==4,3);
+task_relatedcomp = find(whichMarg==4 | whichMarg==1);
 time_relatedcomptop3 = find(whichMarg==3,3);
 time_relatedcomp = find(whichMarg==3);
 for i = 1:n_trials

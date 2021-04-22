@@ -135,8 +135,8 @@ for i = 1:length(nogo_curves)
     end
     tmp = nogo_curves(i).dotpd;
     tmp_chdir = find(tmp<0.7);
-     ind_tmp_chdir = dsearchn(tmp_chdir',np_nogo(i));
-    if abs(tmp_chdir(ind_tmp_chdir) - np_nogo(i)) <7 
+     ind_tmp_chdir = dsearchn(tmp_chdir',37);
+    if (tmp_chdir(ind_tmp_chdir) - 37) <7
         nogo_curves(i).np_val = tmp(tmp_chdir(ind_tmp_chdir));
          nogo_curves(i).np = tmp_chdir(ind_tmp_chdir);
     else
@@ -187,16 +187,6 @@ for i = 1:length(go_curves)
        go_curves(i).np_val = nan;
         go_curves(i).np = nan;
         go_curves(i).np_real = np(i);
-    end
-    ind_tmp_chdir_lp = dsearchn(tmp_chdir',lp(i));
-    if abs(tmp_chdir(ind_tmp_chdir_lp) - lp(i)) <7
-        go_curves(i).lp_val = tmp(tmp_chdir(ind_tmp_chdir_lp));
-        go_curves(i).lp = tmp_chdir(ind_tmp_chdir_lp);
-        go_curves(i).lp_real = lp(i);
-    else
-       go_curves(i).lp_val = nan;
-        go_curves(i).lp = nan;
-        go_curves(i).lp_real = lp(i);
     end
     tmp2 = diff(tmp_chdir);
     tmp_chdir2 = tmp_chdir(find(tmp2>5) + 1);
