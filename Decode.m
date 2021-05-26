@@ -1,5 +1,6 @@
 function [perf_traj,perf_overall_gng] = Decode(W,firingRates,trialNum,shuf,dims)
 top_3_proj = nan(length(dims),size(firingRates,2),size(firingRates,3),size(firingRates,4),size(firingRates,5));
+rng('shuffle');
 for i = 1:2
     for j = 1:2
         for k = 1:trialNum(1,i,j)
@@ -14,40 +15,30 @@ for i = 1:2
         end
     end
 end
-% st = squeeze(nanstd(nanmean(nanmean(firingRates(:,:,1,1:14,:),4),2),[],5));
-% m = squeeze(nanmean(nanmean(nanmean(firingRates(:,:,1,1:14,:),4),2),5));
-% for i = 1:2
-%     for j =1:2
-%         for k = 1:74
-%             for l = 1:size(firingRates,5)
-%                 tmp = squeeze(firingRates(:,i,j,k,l));
-%                 tmp = (tmp-m)./st;
-%                 z_score_firingRates(:,i,j,k,l) = tmp;
-%             end
-%         end
-%     end
-% end
+for i = 1:size(top_3_proj,1)
+    for j = 1:2
+        for k = 1:2
+            for m = 1:trialNum(1,j,k)
+                top_3_proj(i,j,k,:,m) = smooth(top_3_proj(i,j,k,:,m));
+            end
+        end
+    end
+end
+
+
 z_score_firingRatesAverage = nanmean(firingRates,5);
 z_score_firingRates = firingRates;
-if trialNum(1,1,2) < trialNum(1,2,2)
-%     test_nogo = randsample(trialNum(1,1,1),round(trialNum(1,1,2)*0.5));
-test_nogo = randsample(trialNum(1,1,1),trialNum(1,1,2));
-%     test_go = randsample(trialNum(1,2,1),round(trialNum(1,1,2)*0.5));
-    test_go = randsample(trialNum(1,2,1),trialNum(1,1,2));
+
+     test_nogo = randsample(trialNum(1,1,1),round(trialNum(1,1,1)*0.45));
+
+     test_go = randsample(trialNum(1,2,1),round(trialNum(1,2,1)*0.45));
+    
 %     test_go_err = randsample(trialNum(1,2,2),round(trialNum(1,1,2)*0.5));
-    test_go_err = randsample(trialNum(1,2,2),trialNum(1,1,2));
+    test_go_err = 1:trialNum(1,2,2);
 %     test_nogo_err = randsample(trialNum(1,1,2),round(trialNum(1,1,2)*0.5));
     test_nogo_err = 1:trialNum(1,1,2);
-else
-   %     test_nogo = randsample(trialNum(1,1,1),round(trialNum(1,2,2)*0.5));
-test_nogo = randsample(trialNum(1,1,1),trialNum(1,2,2));
-%     test_go = randsample(trialNum(1,2,1),round(trialNum(1,2,2)*0.5));
-    test_go = randsample(trialNum(1,2,1),trialNum(1,2,2));
-%     test_nogo_err = randsample(trialNum(1,1,2),round(trialNum(1,2,2)*0.5));
-    test_nogo_err = randsample(trialNum(1,1,2),trialNum(1,2,2));
-%     test_go_err = randsample(trialNum(1,2,2),round(trialNum(1,2,2)*0.5));
-    test_go_err = 1:trialNum(1,2,2);
-end
+
+
 train_nogo = setdiff(1:trialNum(1,1,1),test_nogo);
 train_go = setdiff(1:trialNum(1,2,1),test_go);
 % train_nogo_err = setdiff(1:trialNum(1,1,2),test_nogo_err);
@@ -94,11 +85,11 @@ for i = 1:length(test_go_err)
     %test_data_go_err_raw(:,:,i) = squeeze(z_score_firingRatesAverage(1,2,2,:,test_go_err(i)));
 end
 
-len_test = [length(test_nogo) length(test_go) length(test_nogo_err) length(test_go_err)];
-% len_test = [length(test_nogo) length(test_go)];
+% len_test = [length(test_nogo) length(test_go) length(test_nogo_err) length(test_go_err)];
+ len_test = [length(test_nogo) length(test_go)];
 len_test = cumsum(len_test);
-test_data = cat(3,test_data_nogo, test_data_go,test_data_nogo_err, test_data_go_err);
-% test_data = cat(3,test_data_nogo, test_data_go);
+% test_data = cat(3,test_data_nogo, test_data_go,test_data_nogo_err, test_data_go_err);
+ test_data = cat(3,test_data_nogo, test_data_go);
 %test_data_raw = cat(3,test_data_nogo_raw, test_data_go_raw,test_data_nogo_err_raw, test_data_go_err_raw);
 % test_data_raw = cat(3,test_data_nogo_raw, test_data_go_raw);
 training_group = [ones(1,length(train_nogo)) 2*ones(1,length(train_go))]; 
@@ -107,7 +98,7 @@ training_group = [ones(1,length(train_nogo)) 2*ones(1,length(train_go))];
   testing_group = [ones(1,length(test_nogo)) 2*ones(1,length(test_go)) ];
 for tim = 2:size(firingRates,4)
     %     for j = 2:size(firingRates,4)
-    class = classify(squeeze(test_data(:,tim,:))',squeeze(train_data(:,tim,:))',training_group);
+    class = classify(squeeze(test_data(:,tim,:))',squeeze(train_data(:,tim,:))',training_group,'linear');
     %class_raw = classify(squeeze(test_data_raw(tim,:,:)),squeeze(train_data_raw(tim,:,:)),training_group);
     %         perf_traj(j-1,tim-1) = length(find(class'-testing_group==0))/length(testing_group);
     %          perf_raw(j-1,tim-1) = length(find(class_raw'-testing_group==0))/length(testing_group);
