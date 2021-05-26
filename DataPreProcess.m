@@ -98,7 +98,7 @@ for i = 1:length(trials)
 %             tmp_tt = timeseries(tmp2(trials(i).nosepokeentryframe:trials(i).leverpressframe));
 %             tmp_tt2 = resample(tmp_tt,extrplt_tim);
 %             dpca_data(i).C_raw(j,:) = [tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe) squeeze(tmp_tt2.data)' tmp2(trials(i).leverpressframe+1:trials(i).leverpressframe+20)];
-dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-29:trials(i).nosepokeentryframe+60);
+dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+50);
         end
     elseif nogo && ~rew
 %         tim_interest = trials(i).nosepokecueoffframe - trials(i).nosepokeentryframe;
@@ -108,13 +108,13 @@ dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-29:trials(i).nosepok
 %             tmp_tt = timeseries(tmp2(trials(i).nosepokeentryframe:trials(i).nosepokecueoffframe));
 %             tmp_tt2 = resample(tmp_tt,extrplt_tim);
 %             dpca_data(i).C_raw(j,:) = [tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe) squeeze(tmp_tt2.data)' tmp2(trials(i).nosepokecueoffframe+1:trials(i).nosepokecueoffframe+20)];
-            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-29:trials(i).nosepokeentryframe+60);
+            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+50);
         end
    else
        
         for j = 1:size(trials(i).Craw,1)
            tmp2 = tmp(j,:);
-            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-29:trials(i).nosepokeentryframe+60);
+            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+50);
             
         end
     end
