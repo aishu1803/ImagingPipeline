@@ -1,4 +1,4 @@
-function [dpca_data,firingRates,firingRatesAverage,trialNum,ind_ee] = DataPreProcess(trials,shuf,dpca)
+function [dpca_data,firingRates,firingRatesAverage,trialNum,ind_ee] = DataPreProcess(trials,shuf,dpca,lim)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This code z-scores, baseline-subtractes and stretches or shrinks the go trials to match the length of the 
@@ -72,8 +72,8 @@ for i = 1:length(trials)
     npentry = trials(i).nosepokeentryframe;
 %      me = mean(trials(i).Craw(:,npentry - 14:npentry-7),2);
 %      me_c = mean(trials(i).C(:,npentry - 14:npentry-7),2);
-       me = mean(trials(i).Craw(:,1:30),2);
-      me_c = mean(trials(i).C(:,1:30),2);
+       me = mean(trials(i).Craw(:,1:lim(1)),2);
+      me_c = mean(trials(i).C(:,1:lim(1)),2);
 
     trials(i).Craw = trials(i).Craw - repmat(me,1,size(trials(i).Craw,2));
     trials(i).C = trials(i).C - repmat(me_c,1,size(trials(i).C,2));
@@ -98,7 +98,7 @@ for i = 1:length(trials)
 %             tmp_tt = timeseries(tmp2(trials(i).nosepokeentryframe:trials(i).leverpressframe));
 %             tmp_tt2 = resample(tmp_tt,extrplt_tim);
 %             dpca_data(i).C_raw(j,:) = [tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe) squeeze(tmp_tt2.data)' tmp2(trials(i).leverpressframe+1:trials(i).leverpressframe+20)];
-dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+50);
+dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-lim(1):trials(i).nosepokeentryframe+lim(2));
         end
     elseif nogo && ~rew
 %         tim_interest = trials(i).nosepokecueoffframe - trials(i).nosepokeentryframe;
@@ -108,13 +108,13 @@ dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepok
 %             tmp_tt = timeseries(tmp2(trials(i).nosepokeentryframe:trials(i).nosepokecueoffframe));
 %             tmp_tt2 = resample(tmp_tt,extrplt_tim);
 %             dpca_data(i).C_raw(j,:) = [tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe) squeeze(tmp_tt2.data)' tmp2(trials(i).nosepokecueoffframe+1:trials(i).nosepokecueoffframe+20)];
-            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+50);
+            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-lim(1):trials(i).nosepokeentryframe+lim(2));
         end
    else
        
         for j = 1:size(trials(i).Craw,1)
            tmp2 = tmp(j,:);
-            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-14:trials(i).nosepokeentryframe+50);
+            dpca_data(i).C_raw(j,:) = tmp2(trials(i).nosepokeentryframe-lim(1):trials(i).nosepokeentryframe+lim(2));
             
         end
     end
