@@ -38,14 +38,14 @@ ans2 = squeeze(mean(dist.hit_cr,3));
 pr25 = prctile(ans,5,2)';
 pr975 = prctile(ans,95,2)';
 y_patch = [pr25 fliplr(pr975)];
-x_patch = [1:90 90:-1:1];
+x_patch = [1:65 65:-1:1];
 figure
 patch(x_patch,y_patch,'k','FaceAlpha',0.1)
 for i = 1:size(ans2,2)
     hold on
     plot(ans2(:,i),'-r','LineWidth',2);
     ind_exceed = [];
-    for j = 1:90
+    for j = 1:length(pr975)
         if ans2(j,i) > pr975(j)
             ind_exceed = [ind_exceed j];
         end
@@ -78,7 +78,7 @@ hold on
 for i = 1:1:size(ans2,2)
     plot(ans2(:,i),'-b','LineWidth',2);
     ind_exceed = [];
-    for j = 1:90
+    for j = 1:length(pr975)
         if ans2(j,i) > pr975(j)
             ind_exceed = [ind_exceed j];
         end
